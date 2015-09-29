@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FileManager
+namespace WpfApplication1
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -24,22 +23,6 @@ namespace FileManager
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void treeView_Loaded(object sender, RoutedEventArgs e)
-        {
-            DirectoryInfo dirDev = new DirectoryInfo(@"D:\");
-            DirectoryInfo[] subdirDev = dirDev.GetDirectories();
-            TreeViewItem root = new TreeViewItem();
-            root.Header = dirDev.FullName.ToString();
-            List<string> childs = new List<string>();
-            foreach (var x in subdirDev)
-            {
-                childs.Add(x.Name.ToString());
-            }
-            root.ItemsSource = childs.ToArray();
-            var tree = sender as TreeView;
-            tree.Items.Add(root);
         }
     }
 }
