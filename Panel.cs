@@ -17,5 +17,15 @@ namespace FileManager.Entities
             activeDrive = FileSystem.GetDrives()[(currentDrive++) % FileSystem.GetNumOfDrives()];
             currentDirectory = activeDrive.RootDirectory;
         }
+
+        public void GetSubdirectories(DirectoryInfo root)
+        {
+            DirectoryInfo[] SubDir = root.GetDirectories();
+            foreach (var x in SubDir)
+            {
+                Console.WriteLine(x);
+            }
+        }
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +26,17 @@ namespace FileManager
             InitializeComponent();
         }
 
+        public void AddDrivesInComboBox(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
+            ComboBox comboBox = sender as ComboBox;
+            DriveInfo[] allDrives = DriveInfo.GetDrives();
+            foreach (var x in allDrives)
+            {
+                comboBox.Items.Add(new ComboBoxItem());
+                comboBox.Items[i++] = x.ToString();
+            }
+
+        }
     }
 }
