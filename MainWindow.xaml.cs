@@ -70,10 +70,17 @@ namespace FileManager
         {
             ListViewItem child = sender as ListViewItem;
             Panel x = GetActivePanel();
-            string newPath = x.GetCurrentDirectory().FullName;
-            if (!newPath.EndsWith(@"\")) newPath += @"\";
-            newPath += child.Content.ToString();
-            x.SetCurrentDirectory(new DirectoryInfo(newPath));
+            if (x.PanelsListView.SelectedIndex == 0)
+            {
+                x.ChangeDirectory(x.GetParentDirectory());
+            }
+            else
+            {
+                string newPath = x.GetCurrentDirectory().FullName;
+                if (!newPath.EndsWith(@"\")) newPath += @"\";
+                newPath += child.Content.ToString();
+                x.ChangeDirectory(new DirectoryInfo(newPath));
+            }
         }
 
         private void PanelChanged(object sender, RoutedEventArgs e)
