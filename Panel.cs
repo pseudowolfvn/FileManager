@@ -57,7 +57,7 @@ namespace FileManager.Entities
             Update();
         }
 
-        public void Change_Directory(DirectoryInfo root)
+        public void ChangeDirectory(DirectoryInfo root)
         {
             currentDirectory = root;
             Update();
@@ -66,7 +66,14 @@ namespace FileManager.Entities
         public void SetCurrentDirectory(DirectoryInfo value)
         {
             currentDirectory = value;
+            Update();
         }
+
+        public DirectoryInfo GetCurrentDirectory()
+        {
+            return currentDirectory;
+        }
+
         public DirectoryInfo GetParentDirectory ()
         {
             ListViewItem dev = new ListViewItem();

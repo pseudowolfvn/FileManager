@@ -14,9 +14,15 @@ namespace FileManager.Entities
         {
             return allDrives.Length;
         }
-        public static DriveInfo[] GetDrives()
+        public static DriveInfo[] GetAllDrives()
         {
             return allDrives;
+        }
+        public static DriveInfo GetDrive(string name)
+        {
+            foreach (var x in allDrives)
+                if (name == x.Name)
+                    return x;
         }
     }
 }

@@ -19,15 +19,24 @@ namespace FileManager
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    using FileManager.Entities;
     public partial class MainWindow : Window
     {
-        Entities.Panel[] panels = new Entities.Panel[2];
+        Panel[] panels = new Panel[2];
+        private ListView ActiveListView; 
+
+        public Panel GetActivePanel()
+        {
+            foreach (var x in panels)
+                if (x.PanelsListView.Equals(ActiveListView))
+                    return x;
+        }
 
         public MainWindow()
         {
             InitializeComponent();
-            panels[0] = new Entities.Panel(comboBox, listView);
-            panels[1] = new Entities.Panel(comboBox1, listView1);
+            panels[0] = new Panel(comboBox, listView);
+            panels[1] = new Panel(comboBox1, listView1);
         }
 
 
@@ -49,28 +58,33 @@ namespace FileManager
             foreach (var x in panels)
             {
                 if (x.PanelsListView.Equals(test))
+                {
                     x.Update();
-                break;
+                    break;
+                }
             }
         }
 
-        private void Change_Directory( object sender, MouseButtonEventArgs e)
+        private void DirectoryChanged(object sender, MouseButtonEventArgs e)
         {
             ListViewItem child = sender as ListViewItem;
-            ListView parent = (ListView)child.Parent;
-            foreach (var x in panels)
-            {
-                if (x.PanelsListView == parent)
-                {
-                    x.SetCurrentDirectory(new DirectoryInfo(x.GetParentDirectory().FullName + @"\" + child.ToString()));
-                    //
-                    x.Update();
-                }
-                break;
-            }
-            
+            Panel x = GetActivePanel();
+            string newPath = x.GetCurrentDirectory().FullName;
+            if (!newPath.EndsWith(@"\")) newPath += @"\";
+            newPath += child.Content.ToString();
+            x.SetCurrentDirectory(new DirectoryInfo(newPath));
         }
 
+        private void PanelChanged(object sender, RoutedEventArgs e)
+        {
+            ActiveListView = sender as ListView;
+        }
 
+        private void DiskChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            ComboBoxItem child = sender as ComboBoxItem;
+            string driveName = child.Content.ToString();
+            GetActivePanel().ChangeDrive(FileSystem.GetDrive(driveName));
+        }
     }
 }
