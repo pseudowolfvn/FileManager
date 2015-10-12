@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,23 +11,69 @@ namespace FileManager.Entities
 {
     class Panel
     {
-        static int currentDrive;
-        DriveInfo activeDrive;
+        public ComboBox PanelsComboBox { get; set; }
+        public ListView PanelsListView { get; set; }
+        static int DriveID;
+        DriveInfo currentDrive;
         DirectoryInfo currentDirectory;
-        public Panel()
+        public Panel(ComboBox panelsComboBox, ListView panelsListView)
         {
-            activeDrive = FileSystem.GetDrives()[(currentDrive++) % FileSystem.GetNumOfDrives()];
-            currentDirectory = activeDrive.RootDirectory;
+            currentDrive = FileSystem.GetDrives()[(DriveID++) % FileSystem.GetNumOfDrives()];
+            currentDirectory = currentDrive.RootDirectory;
+            PanelsComboBox = panelsComboBox;
+            PanelsListView = panelsListView;
         }
 
-        public void GetSubdirectories(DirectoryInfo root)
+        public DirectoryInfo[] GetSubdirectories()
         {
-            DirectoryInfo[] SubDir = root.GetDirectories();
-            foreach (var x in SubDir)
-            {
-                Console.WriteLine(x);
-            }
+            return currentDirectory.GetDirectories();
+        }
+
+        public FileInfo[] GetFiles()
+        {
+            return currentDirectory.GetFiles();
         }
         
+        public void Update ()
+        {
+            PanelsListView.Items.Clear();
+            int i = 0;
+            foreach (var x in this.GetSubdirectories())
+            {
+                PanelsListView.Items.Add(new ListViewItem());
+                PanelsListView.Items[i++] = x.Name;
+            }
+            foreach (var x in this.GetFiles())
+            {
+                PanelsListView.Items.Add(new ListViewItem());
+                PanelsListView.Items[i++] = x.Name;
+            }
+        }
+
+        public void ChangeDrive(DriveInfo root)
+        {
+            currentDrive = root;
+            currentDirectory = currentDrive.RootDirectory;
+            Update();
+        }
+
+        public void Change_Directory(DirectoryInfo root)
+        {
+            currentDirectory = root;
+            Update();
+        }
+
+        public void SetCurrentDirectory(DirectoryInfo value)
+        {
+            currentDirectory = value;
+        }
+        public DirectoryInfo GetParentDirectory ()
+        {
+            ListViewItem dev = new ListViewItem();
+            ListView test = new ListView();
+            return currentDirectory.Parent;
+        }
+        
+
     }
 }

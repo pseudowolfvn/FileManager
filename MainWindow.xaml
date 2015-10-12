@@ -73,7 +73,12 @@
                 </MenuItem>
             </Menu>
         </Grid>
-        <ListView x:Name="listView" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2">
+        <ListView x:Name="listView" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2" Loaded="Test">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="Change_Directory"/>    
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>
