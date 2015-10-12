@@ -30,6 +30,7 @@ namespace FileManager
             foreach (var x in panels)
                 if (x.PanelsListView.Equals(ActiveListView))
                     return x;
+            return null;
         }
 
         public MainWindow()

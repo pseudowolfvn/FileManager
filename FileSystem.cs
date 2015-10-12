@@ -23,6 +23,7 @@ namespace FileManager.Entities
             foreach (var x in allDrives)
                 if (name == x.Name)
                     return x;
+            return null;
         }
     }
 }

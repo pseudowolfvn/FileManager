@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FileManager.Entities
 {
-    class Panel
+    public class Panel
     {
         public ComboBox PanelsComboBox { get; set; }
         public ListView PanelsListView { get; set; }
@@ -18,7 +18,7 @@ namespace FileManager.Entities
         DirectoryInfo currentDirectory;
         public Panel(ComboBox panelsComboBox, ListView panelsListView)
         {
-            currentDrive = FileSystem.GetDrives()[(DriveID++) % FileSystem.GetNumOfDrives()];
+            currentDrive = FileSystem.GetAllDrives()[(DriveID++) % FileSystem.GetNumOfDrives()];
             currentDirectory = currentDrive.RootDirectory;
             PanelsComboBox = panelsComboBox;
             PanelsListView = panelsListView;
