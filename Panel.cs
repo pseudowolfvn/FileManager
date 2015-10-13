@@ -38,6 +38,11 @@ namespace FileManager.Entities
         {
             PanelsListView.Items.Clear();
             int i = 0;
+            if (currentDirectory.FullName != currentDrive.RootDirectory.FullName)
+            {
+                PanelsListView.Items.Add(new ListViewItem());
+                PanelsListView.Items[i++] = "↑...";
+            }
             foreach (var x in this.GetSubdirectories())
             {
                 PanelsListView.Items.Add(new ListViewItem());
@@ -60,12 +65,6 @@ namespace FileManager.Entities
         public void ChangeDirectory(DirectoryInfo root)
         {
             currentDirectory = root;
-            Update();
-        }
-
-        public void SetCurrentDirectory(DirectoryInfo value)
-        {
-            currentDirectory = value;
             Update();
         }
 
