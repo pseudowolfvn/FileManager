@@ -76,13 +76,11 @@ namespace FileManager
             }
             else
             {
-                string newPath = x.GetCurrentDirectory().FullName;
-                if (!newPath.EndsWith(@"\")) newPath += @"\";
-                newPath += child.Content.ToString();
-                x.ChangeDirectory(new DirectoryInfo(newPath));
+                x.ChangeDirectory(new DirectoryInfo(FileSystem.GetPathToDirectory(x, child.Content.ToString())));
             }
         }
 
+        
         private void PanelChanged(object sender, RoutedEventArgs e)
         {
             ActiveListView = sender as ListView;
