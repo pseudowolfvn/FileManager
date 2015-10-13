@@ -74,16 +74,27 @@
             </Menu>
         </Grid>
         <ListView x:Name="leftPanel" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2" Loaded ="PanelInitialized" GotFocus="PanelChanged">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="MouseDoubleClick" Handler="DirectoryChanged"/>    
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="Name"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Type"
+                                    DisplayMemberBinding="{Binding Type}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Size"
+                                    DisplayMemberBinding="{Binding Size}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Date of creation"
+                                    DisplayMemberBinding="{Binding DateOfCreation}"
+                                    Width="100"/>
                 </GridView>
             </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="DirectoryChanged"/>
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
         <ListView x:Name="rightPanel" Grid.Column="3" Margin="5,0" Grid.Row="2" Grid.ColumnSpan="3" Loaded ="PanelInitialized"  GotFocus="PanelChanged">
             <ListView.ItemContainerStyle>
@@ -93,7 +104,18 @@
             </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="Name"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Type"
+                                    DisplayMemberBinding="{Binding Type}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Size"
+                                    DisplayMemberBinding="{Binding Size}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Date of creation"
+                                    DisplayMemberBinding="{Binding DateOfCreation}"
+                                    Width="100"/>
                 </GridView>
             </ListView.View>
         </ListView>
