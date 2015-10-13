@@ -22,8 +22,17 @@ namespace FileManager
     using FileManager.Entities;
     public partial class MainWindow : Window
     {
-        Panel[] panels = new Panel[2];
-        private ListView ActiveListView; 
+        private Panel[] panels;
+        private ListView ActiveListView;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            panels = new Panel[2];
+            panels[0] = new Panel(leftDiskChanger, leftPanel);
+            panels[1] = new Panel(rightDiskChanger, rightPanel);
+            ActiveListView = panels[0].PanelsListView;
+        }
 
         public Panel GetActivePanel()
         {
@@ -33,15 +42,23 @@ namespace FileManager
             return null;
         }
 
-        public MainWindow()
+        public Panel GetConnectedPanel(ListView item)
         {
-            InitializeComponent();
-            panels[0] = new Panel(comboBox, listView);
-            panels[1] = new Panel(comboBox1, listView1);
+            foreach (var x in panels)
+                if (x.PanelsListView.Equals(item))
+                    return x;
+            return null;
         }
 
+        public Panel GetConnectedPanel(ComboBox item)
+        {
+            foreach (var x in panels)
+                if (x.PanelsComboBox.Equals(item))
+                    return x;
+            return null;
+        }
 
-        public void AddDrivesInComboBox(object sender, RoutedEventArgs e)
+        private void AddDrivesInComboBox(object sender, RoutedEventArgs e)
         {
             int i = 0;
             ComboBox comboBox = sender as ComboBox;
@@ -53,7 +70,7 @@ namespace FileManager
             }
 
         }
-        public void Test (object sender, RoutedEventArgs e)
+        private void PanelInitialized(object sender, RoutedEventArgs e)
         {
             ListView test = sender as ListView;
             foreach (var x in panels)
@@ -81,11 +98,11 @@ namespace FileManager
             ActiveListView = sender as ListView;
         }
 
-        private void DiskChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void DiskChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBoxItem child = sender as ComboBoxItem;
-            string driveName = child.Content.ToString();
-            GetActivePanel().ChangeDrive(FileSystem.GetDrive(driveName));
+            ComboBox child = sender as ComboBox;
+            string driveName = child.SelectedValue.ToString();
+            GetConnectedPanel(child).ChangeDrive(FileSystem.GetDrive(driveName));
         }
     }
 }
