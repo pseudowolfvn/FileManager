@@ -9,13 +9,6 @@ using System.Threading.Tasks;
 
 namespace FileManager.Entities
 {
-    public class Item
-    {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public DateTime DateOfCreation { get; set; }
-        public long Size { get; set; }
-    }
     public class Panel
     {
         public ComboBox PanelsComboBox { get; set; }
@@ -44,20 +37,17 @@ namespace FileManager.Entities
         public void Update ()
         {
             PanelsListView.Items.Clear();
-            int i = 0;
             if (currentDirectory.FullName != currentDrive.RootDirectory.FullName)
             {
-                PanelsListView.Items.Add(new Item {Name = "↑..." });
+                PanelsListView.Items.Add(new Item(currentDirectory.Parent, @"↑..."));
             }
             foreach (var x in this.GetSubdirectories())
             {
-                PanelsListView.Items.Add(new Item {Name = x.Name, Type = x.Extension, DateOfCreation = x.CreationTime});
-                i++;
+                PanelsListView.Items.Add(new Item(x));
             }
             foreach (var x in this.GetFiles())
             {
-                PanelsListView.Items.Add(new Item {Name = x.Name, Type = x.Extension, Size = x.Length, DateOfCreation = x.CreationTime});
-                i++;
+                PanelsListView.Items.Add(new Item(x));
             }
         }
 

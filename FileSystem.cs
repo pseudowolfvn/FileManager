@@ -26,13 +26,38 @@ namespace FileManager.Entities
                     return x;
             return null;
         }
-
-        public static string GetPathToDirectory(Entities.Panel x, string child)
-        {
-            string newPath = x.GetCurrentDirectory().FullName;
-            if (!newPath.EndsWith(@"\")) newPath += @"\";
-            return newPath += child;
-        }
     }
-                
+
+    public class Item
+    {
+        private string name;
+        public string Name { get { return name; } set { name = value; } }
+        private string extension;
+        public string Extension { get { return extension; } set { extension = value; } }
+        private string length;
+        public string Length { get { return length; } set { length = value; } }
+        private DateTime creationTime;
+        public DateTime CreationTime { get { return creationTime; } set { creationTime = value; } }
+        private DirectoryInfo directory;
+        public DirectoryInfo Directory { get { return directory; } set { directory = value; } }
+        private FileInfo file;
+        public FileInfo File { get { return file; } set { file = value; } }
+        public Item(DirectoryInfo directory, string name = "")
+        {
+            this.directory = directory;
+            if (name == "") this.name = directory.Name;
+            else this.name = name;
+            this.extension = "";
+            this.length = @"<DIR>";
+        }
+        public Item(FileInfo file)
+        {
+            this.file = file;
+            this.name = file.Name;
+            this.extension = file.Extension;
+            this.length = file.Length.ToString();
+        }
+
+    }
+
 }

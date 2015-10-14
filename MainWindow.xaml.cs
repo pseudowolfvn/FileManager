@@ -88,14 +88,8 @@ namespace FileManager
             ListViewItem child = sender as ListViewItem;
             Panel x = GetActivePanel();
             Item item = (Item)child.Content;
-            if (x.PanelsListView.SelectedIndex == 0)
-            {
-                x.ChangeDirectory(x.GetParentDirectory());
-            }
-            else
-            {
-                x.ChangeDirectory(new DirectoryInfo(FileSystem.GetPathToDirectory(x, item.Name)));
-            }
+            if (item.Directory != null)
+                x.ChangeDirectory(item.Directory);
         }
 
         

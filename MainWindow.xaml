@@ -80,13 +80,13 @@
                                     DisplayMemberBinding="{Binding Name}"
                                     Width="100"/>
                     <GridViewColumn Header="Type"
-                                    DisplayMemberBinding="{Binding Type}"
+                                    DisplayMemberBinding="{Binding Extension}"
                                     Width="100"/>
                     <GridViewColumn Header="Size"
-                                    DisplayMemberBinding="{Binding Size}"
+                                    DisplayMemberBinding="{Binding Length}"
                                     Width="100"/>
                     <GridViewColumn Header="Date of creation"
-                                    DisplayMemberBinding="{Binding DateOfCreation}"
+                                    DisplayMemberBinding="{Binding CreationTime}"
                                     Width="100"/>
                 </GridView>
             </ListView.View>
@@ -108,13 +108,13 @@
                                     DisplayMemberBinding="{Binding Name}"
                                     Width="100"/>
                     <GridViewColumn Header="Type"
-                                    DisplayMemberBinding="{Binding Type}"
+                                    DisplayMemberBinding="{Binding Extension}"
                                     Width="100"/>
                     <GridViewColumn Header="Size"
-                                    DisplayMemberBinding="{Binding Size}"
+                                    DisplayMemberBinding="{Binding Length}"
                                     Width="100"/>
                     <GridViewColumn Header="Date of creation"
-                                    DisplayMemberBinding="{Binding DateOfCreation}"
+                                    DisplayMemberBinding="{Binding CreationTime}"
                                     Width="100"/>
                 </GridView>
             </ListView.View>
