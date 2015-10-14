@@ -26,6 +26,21 @@ namespace FileManager.Entities
                     return x;
             return null;
         }
+        public static void CopyTo(List<FileInfo> files, DirectoryInfo directory)
+        {
+            foreach (var x in files)
+                x.CopyTo(directory.FullName.ToString() + @"\" + x.Name);
+        }
+        public static void MoveTo(List<FileInfo> files, DirectoryInfo directory)
+        {
+            foreach (var x in files)
+                x.MoveTo(directory.FullName.ToString() + @"\" + x.Name);
+        }
+        public static void Delete(List<FileInfo> files)
+        {
+            foreach (var x in files)
+                x.Delete();
+        }
     }
 
     public class Item
