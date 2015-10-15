@@ -75,7 +75,19 @@ namespace FileManager.Entities
             ListView test = new ListView();
             return currentDirectory.Parent;
         }
-        
+        public List<Item> GetSelectedItems(Panel[] panels)
+        {
+            List<Item> SelectedItems = new List<Item>();
+            foreach(var x in panels)
+            {
+                if (!x.Equals(this))
+                {
+                    foreach(Item y in x.PanelsListView.SelectedItems)
+                        SelectedItems.Add(y);
+                }
+            }
+            return SelectedItems;
+        }
 
     }
 }

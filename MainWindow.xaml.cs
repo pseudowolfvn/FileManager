@@ -104,5 +104,23 @@ namespace FileManager
             string driveName = child.SelectedValue.ToString();
             GetConnectedPanel(child).ChangeDrive(FileSystem.GetDrive(driveName));
         }
+        
+        private void OnClickCopy(object sender, RoutedEventArgs e)
+        {
+            FileSystem.CopyTo(GetActivePanel().GetSelectedItems(panels), GetActivePanel().GetCurrentDirectory());
+            GetActivePanel().Update();
+        }
+        private void OnClickMove(object sender, RoutedEventArgs e)
+        {
+            FileSystem.MoveTo(GetActivePanel().GetSelectedItems(panels), GetActivePanel().GetCurrentDirectory());
+            foreach (var x in panels)
+                x.Update();
+        }
+        private void OnClickDelete(object sender, RoutedEventArgs e)
+        {
+            FileSystem.Delete(GetActivePanel().GetSelectedItems(panels));
+            foreach (var x in panels)
+                x.Update();
+        }
     }
 }

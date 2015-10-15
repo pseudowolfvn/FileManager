@@ -22,12 +22,12 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <Button x:Name="button" Content="Button" Margin="0" Grid.Row="3"/>
-        <Button x:Name="button1" Content="Button" Margin="0" Grid.Column="1" Grid.Row="3"/>
-        <Button x:Name="button2" Content="Button" Margin="0" Grid.Column="2" Grid.Row="3"/>
-        <Button x:Name="button3" Content="Button" Margin="0" Grid.Column="3" Grid.Row="3"/>
-        <Button x:Name="button4" Content="Button" Margin="0" Grid.Column="4" Grid.Row="3"/>
-        <Button x:Name="button5" Content="Button" Margin="0" Grid.Column="5" Grid.Row="3"/>
+        <Button x:Name="button" Content="F3 View"  Margin="0" Grid.Row="3" />
+        <Button x:Name="button1" Content="F4 Edit" Margin="0" Grid.Column="1" Grid.Row="3"/>
+        <Button x:Name="button2" Content="F5 Copy" Margin="0" Grid.Column="2" Grid.Row="3" Click="OnClickCopy" />
+        <Button x:Name="button3" Content="F6 Move" Margin="0" Grid.Column="3" Grid.Row="3" Click="OnClickMove"/>
+        <Button x:Name="button4" Content="F7 New Directory" Margin="0" Grid.Column="4" Grid.Row="3"/>
+        <Button x:Name="button5" Content="F8 Delete" Margin="0" Grid.Column="5" Grid.Row="3" Click="OnClickDelete"/>
         <Grid Margin="0" Grid.ColumnSpan="6" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -73,7 +73,7 @@
                 </MenuItem>
             </Menu>
         </Grid>
-        <ListView x:Name="leftPanel" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2" Loaded ="PanelInitialized" GotFocus="PanelChanged">
+        <ListView x:Name="leftPanel" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2" SelectionMode ="Multiple" Loaded ="PanelInitialized" GotFocus="PanelChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name"
@@ -96,7 +96,7 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <ListView x:Name="rightPanel" Grid.Column="3" Margin="5,0" Grid.Row="2" Grid.ColumnSpan="3" Loaded ="PanelInitialized"  GotFocus="PanelChanged">
+        <ListView x:Name="rightPanel" Grid.Column="3" Margin="5,0" SelectionMode="Multiple" Grid.Row="2" Grid.ColumnSpan="3" Loaded ="PanelInitialized"  GotFocus="PanelChanged">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <EventSetter Event="MouseDoubleClick" Handler="DirectoryChanged"/>

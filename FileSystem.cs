@@ -26,20 +26,45 @@ namespace FileManager.Entities
                     return x;
             return null;
         }
-        public static void CopyTo(List<FileInfo> files, DirectoryInfo directory)
+        public static void CopyDirectory (DirectoryInfo from, DirectoryInfo to)
         {
-            foreach (var x in files)
-                x.CopyTo(directory.FullName.ToString() + @"\" + x.Name);
+            string newPath = to.FullName + @"\" + from.Name;
+            to.CreateSubdirectory(from.Name);
+            foreach (var x in from.GetFiles())
+            {
+                x.CopyTo(newPath + @"\" + x.Name);
+            }
+            foreach (var x in from.GetDirectories())
+            {
+                CopyDirectory(x, new DirectoryInfo(newPath));
+            }
         }
-        public static void MoveTo(List<FileInfo> files, DirectoryInfo directory)
+        public static void CopyTo(List<Item> items, DirectoryInfo directory)
         {
-            foreach (var x in files)
-                x.MoveTo(directory.FullName.ToString() + @"\" + x.Name);
+            foreach (Item x in items)
+            {
+                if (x.File != null)
+                    x.File.CopyTo(directory.FullName.ToString() + @"\" + x.Name);
+                else CopyDirectory(x.Directory, directory);
+            }
+                
         }
-        public static void Delete(List<FileInfo> files)
+        public static void MoveTo(List<Item> items, DirectoryInfo directory)
         {
-            foreach (var x in files)
-                x.Delete();
+            foreach (Item x in items)
+            {
+                if (x.File != null)
+                    x.File.MoveTo(directory.FullName.ToString() + @"\" + x.Name);
+                else x.Directory.MoveTo(directory.FullName.ToString() + @"\" + x.Name);
+            }
+        }
+        public static void Delete(List<Item> items)
+        {
+            foreach (Item x in items)
+                if (x.File != null)
+                    x.File.Delete();
+                else
+                    x.Directory.Delete(true);
         }
     }
 
@@ -64,6 +89,7 @@ namespace FileManager.Entities
             else this.name = name;
             this.extension = "";
             this.length = @"<DIR>";
+            this.creationTime = directory.CreationTime;
         }
         public Item(FileInfo file)
         {
@@ -71,6 +97,7 @@ namespace FileManager.Entities
             this.name = file.Name;
             this.extension = file.Extension;
             this.length = file.Length.ToString();
+            this.creationTime = file.CreationTime;
         }
 
     }
