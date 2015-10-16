@@ -68,19 +68,12 @@ namespace FileManager
                 comboBox.Items.Add(new ComboBoxItem());
                 comboBox.Items[i++] = x.ToString();
             }
+            comboBox.SelectedIndex = GetConnectedPanel(comboBox).GetCurrentDriveID();
 
         }
         private void PanelInitialized(object sender, RoutedEventArgs e)
         {
-            ListView test = sender as ListView;
-            foreach (var x in panels)
-            {
-                if (x.PanelsListView.Equals(test))
-                {
-                    x.Update();
-                    break;
-                }
-            }
+            GetConnectedPanel(sender as ListView).Update();
         }
 
         private void DirectoryChanged(object sender, MouseButtonEventArgs e)
@@ -104,21 +97,33 @@ namespace FileManager
             string driveName = child.SelectedValue.ToString();
             GetConnectedPanel(child).ChangeDrive(FileSystem.GetDrive(driveName));
         }
+
+        private List<Item> GetSelectedExceptActive()
+        {
+            List<Item> result = new List<Item>();
+            foreach (var x in panels)
+                if (!x.Equals(GetActivePanel()))
+                {
+                    result.AddRange(x.GetSelectedItems());
+                }
+            return result;
+        }
         
         private void OnClickCopy(object sender, RoutedEventArgs e)
         {
-            FileSystem.CopyTo(GetActivePanel().GetSelectedItems(panels), GetActivePanel().GetCurrentDirectory());
+            FileSystem.CopyTo(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
             GetActivePanel().Update();
         }
         private void OnClickMove(object sender, RoutedEventArgs e)
         {
-            FileSystem.MoveTo(GetActivePanel().GetSelectedItems(panels), GetActivePanel().GetCurrentDirectory());
+            FileSystem.MoveTo(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
             foreach (var x in panels)
                 x.Update();
         }
         private void OnClickDelete(object sender, RoutedEventArgs e)
         {
-            FileSystem.Delete(GetActivePanel().GetSelectedItems(panels));
+            FileSystem.Delete(GetSelectedExceptActive());
+            FileSystem.Delete(GetActivePanel().GetSelectedItems());
             foreach (var x in panels)
                 x.Update();
         }

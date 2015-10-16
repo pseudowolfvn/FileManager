@@ -13,17 +13,22 @@ namespace FileManager.Entities
     {
         public ComboBox PanelsComboBox { get; set; }
         public ListView PanelsListView { get; set; }
-        static int DriveID;
+        static int driveID;
+        int currentDriveID;
         DriveInfo currentDrive;
         DirectoryInfo currentDirectory;
         public Panel(ComboBox panelsComboBox, ListView panelsListView)
         {
-            currentDrive = FileSystem.GetAllDrives()[(DriveID++) % FileSystem.GetNumOfDrives()];
+            currentDriveID = (driveID++) % FileSystem.GetNumOfDrives();
+            currentDrive = FileSystem.GetAllDrives()[currentDriveID];
             currentDirectory = currentDrive.RootDirectory;
             PanelsComboBox = panelsComboBox;
             PanelsListView = panelsListView;
         }
-
+        public int GetCurrentDriveID()
+        {
+            return currentDriveID;
+        }
         public DirectoryInfo[] GetSubdirectories()
         {
             return currentDirectory.GetDirectories();
@@ -75,17 +80,11 @@ namespace FileManager.Entities
             ListView test = new ListView();
             return currentDirectory.Parent;
         }
-        public List<Item> GetSelectedItems(Panel[] panels)
+        public List<Item> GetSelectedItems()
         {
             List<Item> SelectedItems = new List<Item>();
-            foreach(var x in panels)
-            {
-                if (!x.Equals(this))
-                {
-                    foreach(Item y in x.PanelsListView.SelectedItems)
-                        SelectedItems.Add(y);
-                }
-            }
+            foreach(Item x in this.PanelsListView.SelectedItems)
+                SelectedItems.Add(x);        
             return SelectedItems;
         }
 
