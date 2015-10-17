@@ -26,7 +26,7 @@ namespace FileManager.Entities
                     return x;
             return null;
         }
-        public static void CopyDirectory (DirectoryInfo from, DirectoryInfo to)
+        public static void Copy(DirectoryInfo from, DirectoryInfo to)
         {
             string newPath = to.FullName + @"\" + from.Name;
             to.CreateSubdirectory(from.Name);
@@ -36,20 +36,20 @@ namespace FileManager.Entities
             }
             foreach (var x in from.GetDirectories())
             {
-                CopyDirectory(x, new DirectoryInfo(newPath));
+                Copy(x, new DirectoryInfo(newPath));
             }
         }
-        public static void CopyTo(List<Item> items, DirectoryInfo directory)
+        public static void Copy(List<Item> items, DirectoryInfo directory)
         {
             foreach (Item x in items)
             {
                 if (x.File != null)
                     x.File.CopyTo(directory.FullName.ToString() + @"\" + x.Name);
-                else CopyDirectory(x.Directory, directory);
+                else Copy(x.Directory, directory);
             }
                 
         }
-        public static void MoveTo(List<Item> items, DirectoryInfo directory)
+        public static void Move(List<Item> items, DirectoryInfo directory)
         {
             foreach (Item x in items)
             {
@@ -66,7 +66,34 @@ namespace FileManager.Entities
                 else
                     x.Directory.Delete(true);
         }
+
+        public static void Rename(DirectoryInfo directory, string name)
+        {
+            directory.MoveTo(directory.FullName + @"\" + name);
+        }
+
+        public static void Rename(FileInfo file, string name)
+        {
+            file.MoveTo(file.Directory.FullName + @"\" + name);
+        }
+
+        public static void New(DirectoryInfo currentDirectory, ItemType type, string name)
+        {
+            string fullName = currentDirectory.FullName + @"\" + name;
+            if (type == ItemType.Directory)
+            {
+                var newDirectory = new DirectoryInfo(fullName);
+                if (!newDirectory.Exists) newDirectory.Create();
+            }
+            else if (type == ItemType.File)
+            {
+                var newFile = new FileInfo(fullName);
+                if (!newFile.Exists) newFile.Create();
+            }
+        }
     }
+
+    public enum ItemType { Directory, File, Indefinite };
 
     public class Item
     {
@@ -94,7 +121,10 @@ namespace FileManager.Entities
         public Item(FileInfo file)
         {
             this.file = file;
-            this.name = file.Name;
+            string withoutExtension = file.Name;
+            int i = file.Name.LastIndexOf('.');
+            if (i != -1) withoutExtension = file.Name.Substring(0, i);
+            this.name = withoutExtension;
             this.extension = file.Extension;
             this.length = file.Length.ToString();
             this.creationTime = file.CreationTime;

@@ -108,22 +108,55 @@ namespace FileManager
                 }
             return result;
         }
-        
+
+        private List<Item> GetSelected()
+        {
+            List<Item> result = new List<Item>();
+            foreach (var x in panels)
+                result.AddRange(x.GetSelectedItems());
+            return result;
+        }
+
         private void OnClickCopy(object sender, RoutedEventArgs e)
         {
-            FileSystem.CopyTo(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
+            FileSystem.Copy(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
             GetActivePanel().Update();
         }
         private void OnClickMove(object sender, RoutedEventArgs e)
         {
-            FileSystem.MoveTo(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
+            FileSystem.Move(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
             foreach (var x in panels)
                 x.Update();
         }
         private void OnClickDelete(object sender, RoutedEventArgs e)
         {
-            FileSystem.Delete(GetSelectedExceptActive());
-            FileSystem.Delete(GetActivePanel().GetSelectedItems());
+            FileSystem.Delete(GetSelected());
+            foreach (var x in panels)
+                x.Update();
+        }
+
+        private void OnClickNew(object sender, RoutedEventArgs e)
+        {
+            RenameDialog dialog = new RenameDialog();
+            var panel = GetActivePanel();
+            dialog.ShowDialog();
+            FileSystem.New(panel.GetCurrentDirectory(), dialog.Type, dialog.Name + dialog.Extension);
+            panel.Update();
+        }
+
+        private void OnClickRename(object sender, RoutedEventArgs e)
+        {
+            ItemType type;
+            List<Item> items = GetSelected();
+            foreach (var x in items)
+            {
+                if (x.Directory != null) type = ItemType.Directory;
+                else type = ItemType.File;
+                RenameDialog dialog = new RenameDialog(type, x.Name, x.Extension);
+                dialog.ShowDialog();
+                if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
+                else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
+            }
             foreach (var x in panels)
                 x.Update();
         }
