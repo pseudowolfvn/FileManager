@@ -73,7 +73,7 @@
                 </MenuItem>
             </Menu>
         </Grid>
-        <ListView x:Name="leftPanel" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2" SelectionMode ="Multiple" Loaded ="PanelInitialized" GotFocus="PanelChanged">
+        <ListView x:Name="leftPanel" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2" SelectionMode ="Multiple" Loaded ="PanelInitialized" GotFocus="PanelChanged" MouseLeftButtonDown="PanelChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name"
@@ -96,7 +96,7 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <ListView x:Name="rightPanel" Grid.Column="3" Margin="5,0" SelectionMode="Multiple" Grid.Row="2" Grid.ColumnSpan="3" Loaded ="PanelInitialized"  GotFocus="PanelChanged">
+        <ListView x:Name="rightPanel" Grid.Column="3" Margin="5,0" SelectionMode="Multiple" Grid.Row="2" Grid.ColumnSpan="3" Loaded ="PanelInitialized" GotFocus="PanelChanged" MouseLeftButtonDown="PanelChanged">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <EventSetter Event="MouseDoubleClick" Handler="DirectoryChanged"/>
