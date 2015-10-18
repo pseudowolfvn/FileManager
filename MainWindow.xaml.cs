@@ -117,44 +117,29 @@ namespace FileManager
             return result;
         }
 
-        private void NotifyObserves(string s)
+        private void NotifyObserves(string message)
         {
-            switch (s)
-            {
-                case "Delete":
-                case "Rename":
-                case "Move":
-                    foreach (var x in panels)
-                        if (x.IsChanged()) x.Update();
-                    break;
-                case "Copy":
-                case "New":
-                    GetActivePanel().Update();
-                    break;
-            }
+            if (message == "Delete" || message == "Move" || message == "Rename")
+                foreach (var x in panels)
+                    if (x.IsChanged()) x.Update();
+            if (message == "Copy" || message == "Move" || message == "New")
+                GetActivePanel().Update();
         }
-        private bool Agreement(string s, List<Item> list, string to)
+        private bool Agreement(string operation, List<Item> list, string to)
         {
             string message;
-            message = "Are you want to " + s;
+            message = "Do you really want to " + operation;
             foreach (Item x in list)
-            {
-                message = message + " " + x.Name + " (creation time: " + x.CreationTime.ToString() + ", size:" + x.Length.ToString() + " b. ) ";
-            }
-            if (!(s.Equals("delete")))
-            {
-                message = message + "to" + GetActivePanel().GetCurrentDirectory().FullName + "?";
-            }
+                message = message + " " + x.Name + 
+                    " (creation time: " + x.CreationTime.ToString() + ", size: " + x.Length.ToString() + "b) ";
+            if (operation != "delete")
+                message = message + " to " + GetActivePanel().GetCurrentDirectory().FullName + "?";
             else message = message + "?";
             MessageBoxButton button = MessageBoxButton.OKCancel;
             MessageBoxImage icon = MessageBoxImage.Question;
-            MessageBoxResult result = MessageBox.Show(message, "Are you agree?", button, icon);
-            switch(result)
-            {
-                case MessageBoxResult.OK: return true;
-                    break;
-            }
-            return false;
+            MessageBoxResult result = MessageBox.Show(message, operation, button, icon);
+            if (result == MessageBoxResult.OK) return true;
+            else return false;
         }
 
         private void OnClickCopy(object sender, RoutedEventArgs e)

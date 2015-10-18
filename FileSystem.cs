@@ -44,7 +44,7 @@ namespace FileManager.Entities
             foreach (Item x in items)
             {
                 if (x.File != null)
-                    x.File.CopyTo(directory.FullName.ToString() + @"\" + x.Name);
+                    x.File.CopyTo(directory.FullName.ToString() + @"\" + x.Name + x.Extension);
                 else Copy(x.Directory, directory);
             }
                 
@@ -53,9 +53,15 @@ namespace FileManager.Entities
         {
             foreach (Item x in items)
             {
+                string dirFullName = directory.FullName.ToString() + @"\";
                 if (x.File != null)
-                    x.File.MoveTo(directory.FullName.ToString() + @"\" + x.Name);
-                else x.Directory.MoveTo(directory.FullName.ToString() + @"\" + x.Name);
+                    x.File.MoveTo(dirFullName + x.Name + x.Extension);
+                else if (x.Directory.Root == directory.Root) x.Directory.MoveTo(dirFullName);
+                else
+                {
+                    FileSystem.Copy(x.Directory, new DirectoryInfo(dirFullName));
+                    x.Directory.Delete(true);
+                }
             }
         }
         public static void Delete(List<Item> items)

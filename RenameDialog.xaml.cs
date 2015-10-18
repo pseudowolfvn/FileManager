@@ -34,11 +34,13 @@ namespace FileManager
             {
                 typeComboBox.IsEnabled = true;
                 this.Title = "New";
+                this.typeTextBlock.Text = "Create new :";
             }
             else
             {
                 typeComboBox.IsEnabled = false;
                 this.Title = "Rename";
+                this.typeTextBlock.Text = "Rename this :";
             }
             if (type == ItemType.Directory) extensionTextBox.IsEnabled = false;
             nameTextBox.Text = name;
