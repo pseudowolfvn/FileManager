@@ -38,6 +38,11 @@ namespace FileManager.Entities
         {
             return currentDirectory.GetFiles();
         }
+
+        public bool IsChanged()
+        {
+            return (this.PanelsListView.SelectedItem != null);
+        }
         
         public void Update ()
         {
@@ -87,6 +92,7 @@ namespace FileManager.Entities
                 SelectedItems.Add(x);        
             return SelectedItems;
         }
+
 
     }
 }

@@ -117,22 +117,37 @@ namespace FileManager
             return result;
         }
 
+        private void NotifyObserves(string s)
+        {
+            switch (s)
+            {
+                case "Delete":
+                case "Rename":
+                case "Move":
+                    foreach (var x in panels)
+                        if (x.IsChanged()) x.Update();
+                    break;
+                case "Copy":
+                case "New":
+                    GetActivePanel().Update();
+                    break;
+            }
+        }
+
         private void OnClickCopy(object sender, RoutedEventArgs e)
         {
             FileSystem.Copy(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
-            GetActivePanel().Update();
+            NotifyObserves("Copy");
         }
         private void OnClickMove(object sender, RoutedEventArgs e)
         {
             FileSystem.Move(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
-            foreach (var x in panels)
-                x.Update();
+            NotifyObserves("Move");
         }
         private void OnClickDelete(object sender, RoutedEventArgs e)
         {
             FileSystem.Delete(GetSelected());
-            foreach (var x in panels)
-                x.Update();
+            NotifyObserves("Delete");
         }
 
         private void OnClickNew(object sender, RoutedEventArgs e)
@@ -141,7 +156,7 @@ namespace FileManager
             var panel = GetActivePanel();
             dialog.ShowDialog();
             FileSystem.New(panel.GetCurrentDirectory(), dialog.Type, dialog.Name + dialog.Extension);
-            panel.Update();
+            NotifyObserves("New");
         }
 
         private void OnClickRename(object sender, RoutedEventArgs e)
@@ -157,8 +172,7 @@ namespace FileManager
                 if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
                 else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
             }
-            foreach (var x in panels)
-                x.Update();
+            NotifyObserves("Rename");
         }
     }
 }
