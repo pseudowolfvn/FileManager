@@ -133,21 +133,53 @@ namespace FileManager
                     break;
             }
         }
+        private bool Agreement(string s, List<Item> list, string to)
+        {
+            string message;
+            message = "Are you want to " + s;
+            foreach (Item x in list)
+            {
+                message = message + " " + x.Name + " (creation time: " + x.CreationTime.ToString() + ", size:" + x.Length.ToString() + " b. ) ";
+            }
+            if (!(s.Equals("delete")))
+            {
+                message = message + "to" + GetActivePanel().GetCurrentDirectory().FullName + "?";
+            }
+            else message = message + "?";
+            MessageBoxButton button = MessageBoxButton.OKCancel;
+            MessageBoxImage icon = MessageBoxImage.Question;
+            MessageBoxResult result = MessageBox.Show(message, "Are you agree?", button, icon);
+            switch(result)
+            {
+                case MessageBoxResult.OK: return true;
+                    break;
+            }
+            return false;
+        }
 
         private void OnClickCopy(object sender, RoutedEventArgs e)
         {
-            FileSystem.Copy(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
-            NotifyObserves("Copy");
+            if (Agreement("copy", GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory().FullName))
+            {
+                FileSystem.Copy(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
+                NotifyObserves("Copy");
+            }
         }
         private void OnClickMove(object sender, RoutedEventArgs e)
         {
-            FileSystem.Move(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
-            NotifyObserves("Move");
+            if (Agreement("move", GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory().FullName))
+            {
+                FileSystem.Move(GetSelectedExceptActive(), GetActivePanel().GetCurrentDirectory());
+                NotifyObserves("Move");
+            }
         }
         private void OnClickDelete(object sender, RoutedEventArgs e)
         {
-            FileSystem.Delete(GetSelected());
-            NotifyObserves("Delete");
+            if (Agreement("delete", GetSelected(), ""))
+            {
+                FileSystem.Delete(GetSelected());
+                NotifyObserves("Delete");
+            }
         }
 
         private void OnClickNew(object sender, RoutedEventArgs e)
