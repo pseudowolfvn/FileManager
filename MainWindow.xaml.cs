@@ -24,7 +24,6 @@ namespace FileManager
     {
         private Panel[] panels;
         private ListView ActiveListView;
-
         public MainWindow()
         {
             InitializeComponent();
