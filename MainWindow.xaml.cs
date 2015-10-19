@@ -34,12 +34,26 @@ namespace FileManager
             ActiveListView = panels[0].PanelsListView;
         }
 
+        private void NotifyObserves(string message)
+        {
+            if (message == "Delete" || message == "Move" || message == "Rename")
+                foreach (var x in panels)
+                    if (x.IsChanged()) x.Update();
+            if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change")
+                GetActivePanel().Update();
+        }
+
         public Panel GetActivePanel()
         {
             foreach (var x in panels)
                 if (x.PanelsListView.Equals(ActiveListView))
                     return x;
             return null;
+        }
+
+        public void SetActivePanel(Panel panel)
+        {
+            ActiveListView = panel.PanelsListView;
         }
 
         public Panel GetConnectedPanel(ListView item)
@@ -73,19 +87,30 @@ namespace FileManager
         }
         private void PanelInitialized(object sender, RoutedEventArgs e)
         {
-            GetConnectedPanel(sender as ListView).Update();
+            SetActivePanel(GetConnectedPanel(sender as ListView));
+            NotifyObserves("Init");
         }
 
-        private void DirectoryChanged(object sender, MouseButtonEventArgs e)
+        private void ItemHandled(object sender, MouseButtonEventArgs e)
         {
             ListViewItem child = sender as ListViewItem;
             Panel x = GetActivePanel();
             Item item = (Item)child.Content;
             if (item.Directory != null)
+            {
                 x.ChangeDirectory(item.Directory);
+                NotifyObserves("Change");
+            }
+            else if (item.File != null)
+                FileOpen(item.File);
         }
 
-        
+        private static void FileOpen(FileInfo file)
+        {
+            var editor = new TextViewer(file);
+            editor.ShowDialog();
+        }
+
         private void PanelChanged(object sender, RoutedEventArgs e)
         {
             ActiveListView = sender as ListView;
@@ -95,7 +120,10 @@ namespace FileManager
         {
             ComboBox child = sender as ComboBox;
             string driveName = child.SelectedValue.ToString();
-            GetConnectedPanel(child).ChangeDrive(FileSystem.GetDrive(driveName));
+            Panel panel = GetConnectedPanel(child);
+            SetActivePanel(panel);
+            panel.ChangeDrive(FileSystem.GetDrive(driveName));
+            NotifyObserves("Change");
         }
 
         private List<Item> GetSelectedExceptActive()
@@ -117,14 +145,7 @@ namespace FileManager
             return result;
         }
 
-        private void NotifyObserves(string message)
-        {
-            if (message == "Delete" || message == "Move" || message == "Rename")
-                foreach (var x in panels)
-                    if (x.IsChanged()) x.Update();
-            if (message == "Copy" || message == "Move" || message == "New")
-                GetActivePanel().Update();
-        }
+        
         private bool Agreement(string operation, List<Item> list, string to)
         {
             string message;

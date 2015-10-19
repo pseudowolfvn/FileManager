@@ -65,13 +65,11 @@ namespace FileManager.Entities
         {
             currentDrive = root;
             currentDirectory = currentDrive.RootDirectory;
-            Update();
         }
 
         public void ChangeDirectory(DirectoryInfo root)
         {
             currentDirectory = root;
-            Update();
         }
 
         public DirectoryInfo GetCurrentDirectory()

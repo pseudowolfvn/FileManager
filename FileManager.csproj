@@ -58,8 +58,8 @@
     <Compile Include="RenameDialog.xaml.cs">
       <DependentUpon>RenameDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TextEditor.xaml.cs">
-      <DependentUpon>TextEditor.xaml</DependentUpon>
+    <Compile Include="TextViewer.xaml.cs">
+      <DependentUpon>TextViewer.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -78,7 +78,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TextEditor.xaml">
+    <Page Include="TextViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
