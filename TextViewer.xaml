@@ -38,6 +38,8 @@
                     <MenuItem.Header>
                         <TextBlock Text="View" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </MenuItem.Header>
+                    <MenuItem Header="Remove redundant whitespaces" Click="RemoveWhitespaces"/>
+                    <MenuItem Header="Show ten longest words" Click="ShowTenLongestWords"/>
                 </MenuItem>
             </Menu>
             <Menu x:Name="menu3" Grid.Column="3">
