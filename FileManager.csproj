@@ -55,12 +55,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SplitFile.xaml.cs">
+      <DependentUpon>SplitFile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RenameDialog.xaml.cs">
       <DependentUpon>RenameDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="TextViewer.xaml.cs">
       <DependentUpon>TextViewer.xaml</DependentUpon>
     </Compile>
+    <Page Include="SplitFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

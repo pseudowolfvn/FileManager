@@ -85,19 +85,40 @@ namespace FileManager.Entities
 
         public static void New(DirectoryInfo currentDirectory, ItemType type, string name)
         {
+            int index = 1;
             string fullName = currentDirectory.FullName + @"\" + name;
             if (type == ItemType.Directory)
             {
                 var newDirectory = new DirectoryInfo(fullName);
                 if (!newDirectory.Exists) newDirectory.Create();
+                else
+                {
+                    while (newDirectory.Exists)
+                    {
+                        string temp = fullName + "(" + index.ToString() + ")";
+                        ++index;
+                        newDirectory = new DirectoryInfo(temp);
+                    }
+                    newDirectory.Create();
+                }
             }
             else if (type == ItemType.File)
             {
                 var newFile = new FileInfo(fullName);
                 if (!newFile.Exists) newFile.Create();
+                else
+                {
+                    while (newFile.Exists)
+                    {
+                        string temp = fullName + "(" + index.ToString() + ")";
+                        ++index;
+                        newFile = new FileInfo(temp);
+                    }
+                    newFile.Create();
+                }
             }
         }
-    }
+        }
 
     public enum ItemType { Directory, File, Indefinite };
 
