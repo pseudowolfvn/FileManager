@@ -147,39 +147,5 @@ namespace FileManager
                 View();
             }
         }
-        private void AddText (FileStream f, string content)
-        {
-            byte[] temp = new UTF8Encoding(true).GetBytes(content);
-            f.Write(temp, 0, temp.Length);
-        }
-        private void CreateNewBitOfFile(string content, int index)
-        {
-            string name = file.Name + ".part" + index.ToString();
-            string fullName = file.Directory.FullName + @"\" + name;
-            FileInfo temp = new FileInfo(fullName);
-            FileStream text = null;
-            if (!temp.Exists)  text = temp.Create();
-            AddText(text, content);
-            text.Close();
-
-        }
-        public void SplitFile(object sender, RoutedEventArgs e)
-        {
-            SplitFile dialog = new SplitFile();
-            dialog.ShowDialog();
-            this.Split(this.document, dialog.Size);
-        }
-        private void Split (string source, int length)
-        {
-            int i = 0, index = 1;
-            string temp;
-            for (; i <= source.Length-length; i += length )
-            {
-                temp = source.Substring(i, length);
-                CreateNewBitOfFile(temp, index++);
-            }
-            temp = source.Substring(i);
-            CreateNewBitOfFile(temp, index);
-        }
     }
 }

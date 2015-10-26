@@ -7,6 +7,27 @@
         xmlns:Entities="clr-namespace:FileManager.Entities" x:Class="FileManager.MainWindow"
         mc:Ignorable="d"
         Title="FileManager" Height="350" Width="525">
+    <Window.Resources>
+        <Style x:Key="DrivesComboBox" TargetType="{x:Type ComboBox}">
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Width" Value="40"/>
+            <EventSetter Event="Loaded" Handler="AddDrivesInComboBox"/>
+            <EventSetter Event="SelectionChanged" Handler="DiskChanged"/>
+        </Style>
+        <Style x:Key="PanelListView" TargetType="{x:Type ListView}">
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="SelectionMode" Value="Multiple"/>
+            <EventSetter Event="Loaded" Handler="PanelInitialized"/>
+            <EventSetter Event="Loaded" Handler="PanelInitialized"/>
+            <EventSetter Event="GotFocus" Handler="PanelChanged"/>
+            <EventSetter Event="MouseLeftButtonDown" Handler="PanelChanged"/>
+        </Style>
+        <Style x:Key="PanelListViewItem" TargetType="{x:Type ListViewItem}">
+            <EventSetter Event="MouseDoubleClick" Handler="ItemHandled"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -17,7 +38,6 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
@@ -33,8 +53,6 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ComboBox x:Name="leftDiskChanger"  Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="40" Loaded="AddDrivesInComboBox" SelectionChanged="DiskChanged"/>
-            <ComboBox x:Name="rightDiskChanger" Margin="5,0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="40" Loaded="AddDrivesInComboBox" SelectionChanged="DiskChanged" />
         </Grid>
         <Grid Margin="0" Grid.ColumnSpan="6">
             <Grid.ColumnDefinitions>
@@ -49,6 +67,7 @@
                     <MenuItem.Header>
                         <TextBlock Text="File" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </MenuItem.Header>
+                    <MenuItem  Header="Split file" Click="SplitFile"/>
                 </MenuItem>
             </Menu>
             <Menu x:Name="menu1" Grid.Column="1">
@@ -72,52 +91,14 @@
                     </MenuItem.Header>
                 </MenuItem>
             </Menu>
+            <Button x:Name="addPanelButton" Content="+" Grid.Column="4" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="15" Click="PanelAdded"/>
+            <Button x:Name="deletePanelButton" Content="-" Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Top" Width="15" Margin="0,0,15,0" Click="PanelDeleted"/>
         </Grid>
-        <ListView x:Name="leftPanel" Grid.ColumnSpan="3" Margin="5,0" Grid.Row="2" SelectionMode ="Multiple" Loaded ="PanelInitialized" GotFocus="PanelChanged" MouseLeftButtonDown="PanelChanged">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Name"
-                                    DisplayMemberBinding="{Binding Name}"
-                                    Width="100"/>
-                    <GridViewColumn Header="Type"
-                                    DisplayMemberBinding="{Binding Extension}"
-                                    Width="100"/>
-                    <GridViewColumn Header="Size"
-                                    DisplayMemberBinding="{Binding Length}"
-                                    Width="100"/>
-                    <GridViewColumn Header="Date of creation"
-                                    DisplayMemberBinding="{Binding CreationTime}"
-                                    Width="100"/>
-                </GridView>
-            </ListView.View>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="MouseDoubleClick" Handler="ItemHandled"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
-        <ListView x:Name="rightPanel" Grid.Column="3" Margin="5,0" SelectionMode="Multiple" Grid.Row="2" Grid.ColumnSpan="3" Loaded ="PanelInitialized" GotFocus="PanelChanged" MouseLeftButtonDown="PanelChanged">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="MouseDoubleClick" Handler="ItemHandled"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Name"
-                                    DisplayMemberBinding="{Binding Name}"
-                                    Width="100"/>
-                    <GridViewColumn Header="Type"
-                                    DisplayMemberBinding="{Binding Extension}"
-                                    Width="100"/>
-                    <GridViewColumn Header="Size"
-                                    DisplayMemberBinding="{Binding Length}"
-                                    Width="100"/>
-                    <GridViewColumn Header="Date of creation"
-                                    DisplayMemberBinding="{Binding CreationTime}"
-                                    Width="100"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <Grid x:Name="PanelsGrid" Grid.Row="1" Grid.ColumnSpan="6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+        </Grid>
     </Grid>
 </Window>
