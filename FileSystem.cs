@@ -8,16 +8,22 @@ using System.Threading.Tasks;
 
 namespace FileManager.Entities
 {
-    static class FileSystem
+    public static class FileSystem
     {
-        static DriveInfo[] allDrives = DriveInfo.GetDrives();
+        static List<DriveInfo> allDrives;
+        static FileSystem()
+        {
+            allDrives = new List<DriveInfo>();
+            foreach (var x in DriveInfo.GetDrives())
+                if (x.IsReady) allDrives.Add(x);
+        }
         public static int GetNumOfDrives()
         {
-            return allDrives.Length;
+            return allDrives.Count;
         }
         public static DriveInfo[] GetAllDrives()
         {
-            return allDrives;
+            return allDrives.ToArray();
         }
         public static DriveInfo GetDrive(string name)
         {
