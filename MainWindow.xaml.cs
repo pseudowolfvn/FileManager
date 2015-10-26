@@ -22,72 +22,23 @@ namespace FileManager
     using FileManager.Entities;
     public partial class MainWindow : Window
     {
-        private List<Panel> panels = new List<Panel>();
-        static int numOfPanels = 0;
+        private Panel[] panels;
         private ListView ActiveListView;
         public MainWindow()
         {
             InitializeComponent();
-            panels.Add(AddNewPanel());
-            panels.Add(AddNewPanel());
+            panels = new Panel[2];
+            panels[0] = new Panel(leftDiskChanger, leftPanel);
+            panels[1] = new Panel(rightDiskChanger, rightPanel);
             ActiveListView = panels[0].PanelsListView;
         }
 
-        public Panel AddNewPanel()
-        {
-            ListView newLV = new ListView();
-            newLV.Style = Resources["PanelListView"] as Style;
-            newLV.ItemContainerStyle = Resources["PanelListViewItem"] as Style; ;
-            GridView columns = new GridView();
-            GridViewColumn name = new GridViewColumn();
-            name.Header = "Name";
-            name.DisplayMemberBinding = new Binding("Name");
-            name.Width = 100;
-            GridViewColumn type = new GridViewColumn();
-            type.Header = "Type";
-            type.DisplayMemberBinding = new Binding("Extension");
-            type.Width = 100;
-            GridViewColumn size = new GridViewColumn();
-            size.Header = "Size";
-            size.DisplayMemberBinding = new Binding("Length");
-            size.Width = 100;
-            GridViewColumn date = new GridViewColumn();
-            date.Header = "Date of creation";
-            date.DisplayMemberBinding = new Binding("CreationTime");
-            date.Width = 100;
-            columns.Columns.Add(name);
-            columns.Columns.Add(type);
-            columns.Columns.Add(size);
-            columns.Columns.Add(date);
-            newLV.View = columns;
-            ComboBox newCB = new ComboBox();
-            newCB.Style = Resources["DrivesComboBox"] as Style;
-            ColumnDefinition newColumn = new ColumnDefinition();
-            newColumn.Width = new GridLength(1, GridUnitType.Star);
-            PanelsGrid.ColumnDefinitions.Add(newColumn);
-            newLV.SetValue(Grid.RowProperty, 1);
-            newLV.SetValue(Grid.ColumnProperty, numOfPanels);
-            newCB.SetValue(Grid.RowProperty, 0);
-            newCB.SetValue(Grid.ColumnProperty, numOfPanels);
-            PanelsGrid.Children.Add(newLV);
-            PanelsGrid.Children.Add(newCB);
-            ++numOfPanels;
-            return new Panel(newCB, newLV);
-        }
-
-        public void DeletePanel()
-        {
-            PanelsGrid.ColumnDefinitions.RemoveAt(PanelsGrid.ColumnDefinitions.Count - 1);
-            PanelsGrid.Children.RemoveAt(PanelsGrid.Children.Count - 1);
-            --numOfPanels;
-        } 
-
-        private void NotifyObserves(string message)
+        public void NotifyObserves(string message)
         {
             if (message == "Delete" || message == "Move" || message == "Rename")
                 foreach (var x in panels)
                     if (x.IsChanged()) x.Update();
-            if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change")
+            if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change" || message == "Split")
                 GetActivePanel().Update();
         }
 
@@ -133,24 +84,30 @@ namespace FileManager
             comboBox.SelectedIndex = GetConnectedPanel(comboBox).GetCurrentDriveID();
 
         }
+
         private void PanelInitialized(object sender, RoutedEventArgs e)
         {
             SetActivePanel(GetConnectedPanel(sender as ListView));
             NotifyObserves("Init");
         }
 
-        private void ItemHandled(object sender, MouseButtonEventArgs e)
+        private void ItemHandled(object sender, MouseButtonEventArgs a)
         {
             ListViewItem child = sender as ListViewItem;
             Panel x = GetActivePanel();
             Item item = (Item)child.Content;
-            if (item.Directory != null)
+                if ((item.Directory != null))// && (!item.Directory.GetAccessControl().AccessRightType.))
+                {
+                    x.ChangeDirectory(item.Directory);
+                    NotifyObserves("Change");
+                }
+                else if (item.File != null)
+                    FileOpen(item.File);
+                else
             {
-                x.ChangeDirectory(item.Directory);
-                NotifyObserves("Change");
+                string text = "You haven't access to this directory";
+                MessageBoxResult exception = MessageBox.Show(text);
             }
-            else if (item.File != null)
-                FileOpen(item.File);
         }
 
         private static void FileOpen(FileInfo file)
@@ -193,7 +150,23 @@ namespace FileManager
             return result;
         }
 
-        
+        private Item GetOneSelected()
+        {
+            List<Item> selected = GetSelected();
+            //if (selected[1] == null)
+                return selected[0];
+            //else - exception
+        }
+
+        public void SplitFile(object sender, RoutedEventArgs e)
+        {
+            Item document = GetOneSelected();
+            SplitFile dialog = new SplitFile();
+            dialog.ShowDialog();
+            FileSystem.Split(File.ReadAllText(document.File.FullName, Encoding.UTF8), dialog.Size, document);
+            NotifyObserves("Split");
+        }
+
         private bool Agreement(string operation, List<Item> list, string to)
         {
             string message;
@@ -241,8 +214,11 @@ namespace FileManager
             RenameDialog dialog = new RenameDialog();
             var panel = GetActivePanel();
             dialog.ShowDialog();
-            FileSystem.New(panel.GetCurrentDirectory(), dialog.Type, dialog.Name + dialog.Extension);
-            NotifyObserves("New");
+            if (dialog.Name != "")
+            {
+                FileSystem.New(panel.GetCurrentDirectory(), dialog.Type, dialog.Name, dialog.Extension);
+                NotifyObserves("New");
+            }
         }
 
         private void OnClickRename(object sender, RoutedEventArgs e)
@@ -255,20 +231,13 @@ namespace FileManager
                 else type = ItemType.File;
                 RenameDialog dialog = new RenameDialog(type, x.Name, x.Extension);
                 dialog.ShowDialog();
-                if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
-                else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
+                if (dialog.Name != "")
+                {
+                    if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
+                    else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
+                }
             }
             NotifyObserves("Rename");
-        }
-
-        private void PanelAdded(object sender, RoutedEventArgs e)
-        {
-            panels.Add(AddNewPanel());
-        }
-
-        private void PanelDeleted(object sender, RoutedEventArgs e)
-        {
-            DeletePanel();
         }
     }
 }

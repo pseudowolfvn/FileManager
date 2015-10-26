@@ -26,8 +26,14 @@ namespace FileManager
         public string Name { get { return name; } set { name = value; } }
         public string Extension { get { return extension; } set { extension = value; } }
         public ItemType Type { get { return dialogType; } set { dialogType = value; } }
+
+        static readonly string defaultFolderName = "New Folder";
+        static readonly string defaultFileName = "New File";
+        char[] exception = { ':', '\\', '/', '*', '?', '"', '|', '<', '>' };
         public RenameDialog(ItemType type = ItemType.Indefinite, string name = "", string extension = "")
         {
+            this.name = name;
+            this.extension = extension;
             dialogType = type;
             InitializeComponent();
             if (type == ItemType.Indefinite)
@@ -52,7 +58,8 @@ namespace FileManager
             ComboBox comboBox = sender as ComboBox;
             comboBox.Items.Add(ItemType.Directory);
             comboBox.Items.Add(ItemType.File);
-            comboBox.SelectedIndex = (int)dialogType;
+            if (dialogType == ItemType.Indefinite) comboBox.SelectedIndex = (int)ItemType.Directory;
+            else comboBox.SelectedIndex = (int)dialogType;
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
@@ -62,8 +69,19 @@ namespace FileManager
 
         private void OnOk(object sender, RoutedEventArgs e)
         {
-            this.Name = nameTextBox.Text;
+            if ((nameTextBox.Text.IndexOfAny(exception) != -1) || (extensionTextBox.Text.IndexOfAny(exception) != -1))
+            {
+                string text = "The name of file must ot contain any of this symbols: : | \\ / : * ? < > \" ";
+                MessageBox.Show(text);
+                return;
+            }
+            if (nameTextBox.Text != "")
+                this.Name = nameTextBox.Text;
+            else if (Type == ItemType.Directory)
+                this.Name = defaultFolderName;
+            else this.Name = defaultFileName;
             this.Extension = extensionTextBox.Text;
+
             this.Close();
         }
 
