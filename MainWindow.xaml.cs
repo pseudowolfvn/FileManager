@@ -33,12 +33,12 @@ namespace FileManager
             ActiveListView = panels[0].PanelsListView;
         }
 
-        private void NotifyObserves(string message)
+        public void NotifyObserves(string message)
         {
             if (message == "Delete" || message == "Move" || message == "Rename")
                 foreach (var x in panels)
                     if (x.IsChanged()) x.Update();
-            if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change")
+            if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change" || message == "Split")
                 GetActivePanel().Update();
         }
 
@@ -84,24 +84,30 @@ namespace FileManager
             comboBox.SelectedIndex = GetConnectedPanel(comboBox).GetCurrentDriveID();
 
         }
+
         private void PanelInitialized(object sender, RoutedEventArgs e)
         {
             SetActivePanel(GetConnectedPanel(sender as ListView));
             NotifyObserves("Init");
         }
 
-        private void ItemHandled(object sender, MouseButtonEventArgs e)
+        private void ItemHandled(object sender, MouseButtonEventArgs a)
         {
             ListViewItem child = sender as ListViewItem;
             Panel x = GetActivePanel();
             Item item = (Item)child.Content;
-            if (item.Directory != null)
+                if ((item.Directory != null))// && (!item.Directory.GetAccessControl().AccessRightType.))
+                {
+                    x.ChangeDirectory(item.Directory);
+                    NotifyObserves("Change");
+                }
+                else if (item.File != null)
+                    FileOpen(item.File);
+                else
             {
-                x.ChangeDirectory(item.Directory);
-                NotifyObserves("Change");
+                string text = "You haven't access to this directory";
+                MessageBoxResult exception = MessageBox.Show(text);
             }
-            else if (item.File != null)
-                FileOpen(item.File);
         }
 
         private static void FileOpen(FileInfo file)
@@ -144,7 +150,23 @@ namespace FileManager
             return result;
         }
 
-        
+        private Item GetOneSelected()
+        {
+            List<Item> selected = GetSelected();
+            //if (selected[1] == null)
+                return selected[0];
+            //else - exception
+        }
+
+        public void SplitFile(object sender, RoutedEventArgs e)
+        {
+            Item document = GetOneSelected();
+            SplitFile dialog = new SplitFile();
+            dialog.ShowDialog();
+            FileSystem.Split(File.ReadAllText(document.File.FullName, Encoding.UTF8), dialog.Size, document);
+            NotifyObserves("Split");
+        }
+
         private bool Agreement(string operation, List<Item> list, string to)
         {
             string message;
@@ -192,8 +214,11 @@ namespace FileManager
             RenameDialog dialog = new RenameDialog();
             var panel = GetActivePanel();
             dialog.ShowDialog();
-            FileSystem.New(panel.GetCurrentDirectory(), dialog.Type, dialog.Name + dialog.Extension);
-            NotifyObserves("New");
+            if (dialog.Name != "")
+            {
+                FileSystem.New(panel.GetCurrentDirectory(), dialog.Type, dialog.Name, dialog.Extension);
+                NotifyObserves("New");
+            }
         }
 
         private void OnClickRename(object sender, RoutedEventArgs e)
@@ -206,8 +231,11 @@ namespace FileManager
                 else type = ItemType.File;
                 RenameDialog dialog = new RenameDialog(type, x.Name, x.Extension);
                 dialog.ShowDialog();
-                if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
-                else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
+                if (dialog.Name != "")
+                {
+                    if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
+                    else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
+                }
             }
             NotifyObserves("Rename");
         }

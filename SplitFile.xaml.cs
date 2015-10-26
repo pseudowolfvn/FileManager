@@ -31,6 +31,7 @@ namespace FileManager
             int temp = Convert.ToInt32(textBox.Text);
             Size = temp;
             this.Close();
+
         }
     }
 }

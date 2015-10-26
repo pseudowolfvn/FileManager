@@ -49,6 +49,7 @@
                     <MenuItem.Header>
                         <TextBlock Text="File" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </MenuItem.Header>
+                    <MenuItem  Header="Split file" Click="SplitFile"/>
                 </MenuItem>
             </Menu>
             <Menu x:Name="menu1" Grid.Column="1">

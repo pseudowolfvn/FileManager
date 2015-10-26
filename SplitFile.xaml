@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager"
         mc:Ignorable="d"
-        Title="DivideFile" Height="160.638" Width="300">
+        Title="SplitFile" Height="160.638" Width="300" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBox x:Name="textBox" HorizontalAlignment="Center" Height="30" Margin="0" TextWrapping="Wrap" Text="Size of result file:" VerticalAlignment="Bottom" Width="162"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Center" Height="30" Margin="0" TextWrapping="Wrap" Text="" VerticalAlignment="Bottom" Width="162"/>
         <Button x:Name="button" Content="OK" HorizontalAlignment="Center" Height="26" Margin="0,0,0,5" Grid.Row="1" VerticalAlignment="Bottom" Width="85" Click="OnOK"/>
+        <Label x:Name="label" Content="Size of result file:" FontSize="9" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,14,0,0" Height="22" RenderTransformOrigin="0.487,0.705"/>
 
     </Grid>
 </Window>
