@@ -22,16 +22,65 @@ namespace FileManager
     using FileManager.Entities;
     public partial class MainWindow : Window
     {
-        private Panel[] panels;
+        private List<Panel> panels = new List<Panel>();
+        static int numOfPanels = 0;
         private ListView ActiveListView;
         public MainWindow()
         {
             InitializeComponent();
-            panels = new Panel[2];
-            panels[0] = new Panel(leftDiskChanger, leftPanel);
-            panels[1] = new Panel(rightDiskChanger, rightPanel);
+            panels.Add(AddNewPanel());
+            panels.Add(AddNewPanel());
             ActiveListView = panels[0].PanelsListView;
         }
+
+        public Panel AddNewPanel()
+        {
+            ListView newLV = new ListView();
+            newLV.Style = Resources["PanelListView"] as Style;
+            newLV.ItemContainerStyle = Resources["PanelListViewItem"] as Style; ;
+            GridView columns = new GridView();
+            GridViewColumn name = new GridViewColumn();
+            name.Header = "Name";
+            name.DisplayMemberBinding = new Binding("Name");
+            name.Width = 100;
+            GridViewColumn type = new GridViewColumn();
+            type.Header = "Type";
+            type.DisplayMemberBinding = new Binding("Extension");
+            type.Width = 100;
+            GridViewColumn size = new GridViewColumn();
+            size.Header = "Size";
+            size.DisplayMemberBinding = new Binding("Length");
+            size.Width = 100;
+            GridViewColumn date = new GridViewColumn();
+            date.Header = "Date of creation";
+            date.DisplayMemberBinding = new Binding("CreationTime");
+            date.Width = 100;
+            columns.Columns.Add(name);
+            columns.Columns.Add(type);
+            columns.Columns.Add(size);
+            columns.Columns.Add(date);
+            newLV.View = columns;
+            ComboBox newCB = new ComboBox();
+            newCB.Style = Resources["DrivesComboBox"] as Style;
+            ColumnDefinition newColumn = new ColumnDefinition();
+            newColumn.Width = new GridLength(1, GridUnitType.Star);
+            PanelsGrid.ColumnDefinitions.Add(newColumn);
+            newLV.SetValue(Grid.RowProperty, 1);
+            newLV.SetValue(Grid.ColumnProperty, numOfPanels);
+            newCB.SetValue(Grid.RowProperty, 0);
+            newCB.SetValue(Grid.ColumnProperty, numOfPanels);
+            PanelsGrid.Children.Add(newLV);
+            PanelsGrid.Children.Add(newCB);
+            ++numOfPanels;
+            return new Panel(newCB, newLV);
+        }
+
+        public void DeletePanel()
+        {
+            PanelsGrid.ColumnDefinitions.RemoveAt(PanelsGrid.ColumnDefinitions.Count - 1);
+            PanelsGrid.Children.RemoveAt(PanelsGrid.Children.Count - 1);
+            --numOfPanels;
+        } 
 
         private void NotifyObserves(string message)
         {
@@ -210,6 +259,16 @@ namespace FileManager
                 else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
             }
             NotifyObserves("Rename");
+        }
+
+        private void PanelAdded(object sender, RoutedEventArgs e)
+        {
+            panels.Add(AddNewPanel());
+        }
+
+        private void PanelDeleted(object sender, RoutedEventArgs e)
+        {
+            DeletePanel();
         }
     }
 }
