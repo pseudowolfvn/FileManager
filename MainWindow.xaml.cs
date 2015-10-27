@@ -124,7 +124,7 @@ namespace FileManager
         {
             int i = 0;
             ComboBox comboBox = sender as ComboBox;
-            DriveInfo[] allDrives = DriveInfo.GetDrives();
+            DriveInfo[] allDrives = FileSystem.GetAllDrives();
             foreach (var x in allDrives)
             {
                 comboBox.Items.Add(new ComboBoxItem());
