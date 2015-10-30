@@ -32,33 +32,25 @@ namespace FileManager
             panels.Add(AddNewPanel());
             ActiveListView = panels[0].PanelsListView;
         }
+        private GridViewColumn AddGridViewColumn (string header, string binding)
+        {
+            GridViewColumn column = new GridViewColumn();
+            column.Header = header;
+            column.DisplayMemberBinding = new Binding(binding);
+            column.Width = 100;
+            return column;
+        }
 
         public Panel AddNewPanel()
         {
             ListView newLV = new ListView();
             newLV.Style = Resources["PanelListView"] as Style;
             newLV.ItemContainerStyle = Resources["PanelListViewItem"] as Style; ;
-            GridView columns = new GridView();
-            GridViewColumn name = new GridViewColumn();
-            name.Header = "Name";
-            name.DisplayMemberBinding = new Binding("Name");
-            name.Width = 100;
-            GridViewColumn type = new GridViewColumn();
-            type.Header = "Type";
-            type.DisplayMemberBinding = new Binding("Extension");
-            type.Width = 100;
-            GridViewColumn size = new GridViewColumn();
-            size.Header = "Size";
-            size.DisplayMemberBinding = new Binding("Length");
-            size.Width = 100;
-            GridViewColumn date = new GridViewColumn();
-            date.Header = "Date of creation";
-            date.DisplayMemberBinding = new Binding("CreationTime");
-            date.Width = 100;
-            columns.Columns.Add(name);
-            columns.Columns.Add(type);
-            columns.Columns.Add(size);
-            columns.Columns.Add(date);
+            GridView columns = new GridView(); 
+            columns.Columns.Add(AddGridViewColumn( "Name", "Name"));
+            columns.Columns.Add(AddGridViewColumn( "Type", "Extension"));
+            columns.Columns.Add(AddGridViewColumn( "Size", "Length"));
+            columns.Columns.Add(AddGridViewColumn( "Date of creation", "CreationTime"));
             newLV.View = columns;
             ComboBox newCB = new ComboBox();
             newCB.Style = Resources["DrivesComboBox"] as Style;

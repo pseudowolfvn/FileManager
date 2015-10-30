@@ -51,7 +51,7 @@ namespace FileManager.Entities
             {
                 PanelsListView.Items.Add(new Item(currentDirectory.Parent, @"↑..."));
             }
-            foreach (var x in this.GetSubdirectories())
+            foreach (var x in this.GetSubdirectories() )
             {
                 PanelsListView.Items.Add(new Item(x));
             }
