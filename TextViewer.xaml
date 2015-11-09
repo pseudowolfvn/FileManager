@@ -40,6 +40,7 @@
                     </MenuItem.Header>
                     <MenuItem Header="Remove redundant whitespaces" Click="RemoveWhitespaces"/>
                     <MenuItem Header="Show ten longest words" Click="ShowTenLongestWords"/>
+                    <MenuItem Header="View as HTML" Click="ChangeView"/>
                 </MenuItem>
             </Menu>
             <Menu x:Name="menu3" Grid.Column="3">
@@ -53,6 +54,9 @@
         <FlowDocumentScrollViewer x:Name="flowDoc" Grid.Row="1">
             
         </FlowDocumentScrollViewer>
+        <WebBrowser x:Name="webDoc" Grid.Row="1" Visibility="Hidden">
+            
+        </WebBrowser>
 
     </Grid>
 </Window>

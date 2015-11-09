@@ -47,6 +47,7 @@ namespace FileManager.Entities
         public void Update ()
         {
             PanelsListView.Items.Clear();
+            if (Directory.Exists(currentDirectory.FullName) != true) currentDirectory = this.GetParentDirectory();
             if (currentDirectory.FullName != currentDrive.RootDirectory.FullName)
             {
                 PanelsListView.Items.Add(new Item(currentDirectory.Parent, @"↑..."));
@@ -76,12 +77,12 @@ namespace FileManager.Entities
         {
             return currentDirectory;
         }
-
-        public DirectoryInfo GetParentDirectory ()
+        
+        public DirectoryInfo GetParentDirectory()
         {
-            ListViewItem dev = new ListViewItem();
-            ListView test = new ListView();
-            return currentDirectory.Parent;
+            DirectoryInfo existParent = currentDirectory.Parent;
+            while (existParent.Exists != true) existParent = existParent.Parent;
+            return existParent;
         }
         public List<Item> GetSelectedItems()
         {

@@ -146,9 +146,9 @@ namespace FileManager.Entities
         public static void Delete(List<Item> items)
         {
             foreach (Item x in items)
-                if (x.File != null)
+                if (x.File != null && File.Exists(x.File.FullName))
                     x.File.Delete();
-                else
+                else if (Directory.Exists(x.Directory.FullName))
                     x.Directory.Delete(true);
         }
 
