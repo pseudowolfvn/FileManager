@@ -12,7 +12,7 @@
             <Setter Property="Margin" Value="5,0"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Width" Value="40"/>
+            <Setter Property="Width" Value="45"/>
             <EventSetter Event="Loaded" Handler="AddDrivesInComboBox"/>
             <EventSetter Event="SelectionChanged" Handler="DiskChanged"/>
         </Style>

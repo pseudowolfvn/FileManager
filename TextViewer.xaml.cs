@@ -147,5 +147,20 @@ namespace FileManager
                 View();
             }
         }
+
+        private void ChangeView(object sender, RoutedEventArgs e)
+        {
+            if (flowDoc.Visibility == Visibility.Visible)
+            {
+                flowDoc.Visibility = Visibility.Hidden;
+                webDoc.NavigateToString(document);
+                webDoc.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                webDoc.Visibility = Visibility.Hidden;
+                flowDoc.Visibility = Visibility.Visible;
+            }
+        }
     }
 }

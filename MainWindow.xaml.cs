@@ -272,7 +272,7 @@ namespace FileManager
                 else type = ItemType.File;
                 RenameDialog dialog = new RenameDialog(type, x.Name, x.Extension);
                 dialog.ShowDialog();
-                if (dialog.Name != "")
+                if (dialog.Name != "" && dialog.Name != x.Name)
                 {
                     if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
                     else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);

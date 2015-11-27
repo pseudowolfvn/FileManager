@@ -71,7 +71,7 @@ namespace FileManager
         {
             if ((nameTextBox.Text.IndexOfAny(exception) != -1) || (extensionTextBox.Text.IndexOfAny(exception) != -1))
             {
-                string text = "The name of file must ot contain any of this symbols: : | \\ / : * ? < > \" ";
+                string text = "The name of file mustn't contain any of this symbols: : | \\ / : * ? < > \" ";
                 MessageBox.Show(text);
                 return;
             }
@@ -89,7 +89,11 @@ namespace FileManager
         {
             ComboBox child = sender as ComboBox;
             this.Type = (ItemType)child.SelectedItem;
-            if (Type == ItemType.Directory) extensionTextBox.IsEnabled = false;
+            if (Type == ItemType.Directory)
+            {
+                extensionTextBox.Text = "";
+                extensionTextBox.IsEnabled = false;
+            } 
             else if (Type == ItemType.File) extensionTextBox.IsEnabled = true;
         }
     }
