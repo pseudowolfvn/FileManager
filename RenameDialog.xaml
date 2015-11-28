@@ -15,14 +15,15 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="0.5*"/>
-            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.01*"/>
+            <ColumnDefinition Width="0.49*"/>
         </Grid.ColumnDefinitions>
         <Button x:Name="acceptButton" Content="OK" Grid.Row="2" Click="OnOk" Margin="2.5"/>
-        <Button x:Name="denyButton" Content="Cancel" Grid.Column="1" Grid.Row="2" Click="OnCancel" Grid.ColumnSpan="2" Margin="2.5"/>
-        <TextBox x:Name="nameTextBox" Grid.Row="1" TextWrapping="Wrap" Text="Name" Grid.ColumnSpan="2" Margin="2.5"/>
-        <TextBox x:Name="extensionTextBox" Grid.Column="2" Grid.Row="1" TextWrapping="Wrap" Text="Extension" Margin="2.5"/>
-        <ComboBox x:Name="typeComboBox" Margin="2.5" Loaded="AddTypes" SelectionChanged="TypeChanged" Grid.ColumnSpan="2" Grid.Column="1"/>
+        <Button x:Name="denyButton" Content="Cancel" Grid.Column="1" Grid.Row="2" Click="OnCancel" Grid.ColumnSpan="3" Margin="2.5"/>
+        <TextBox x:Name="nameTextBox" Grid.Row="1" TextWrapping="Wrap" Text="Name" Grid.ColumnSpan="2" Margin="3"/>
+        <TextBox x:Name="extensionTextBox" Grid.Column="3" Grid.Row="1" TextWrapping="Wrap" Text="Extension" Margin="3"/>
+        <ComboBox x:Name="typeComboBox" Margin="2.5" Loaded="AddTypes" SelectionChanged="TypeChanged" Grid.Column="1" Grid.ColumnSpan="3"/>
         <TextBlock x:Name="typeTextBlock" TextWrapping="Wrap" Text="New/Rename" Margin="2.5" HorizontalAlignment="Center"/>
-
+        <TextBlock x:Name="dotTextBlock" TextWrapping="Wrap" Text="." HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="2"/>
     </Grid>
 </Window>

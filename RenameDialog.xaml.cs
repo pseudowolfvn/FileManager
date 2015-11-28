@@ -80,7 +80,7 @@ namespace FileManager
             else if (Type == ItemType.Directory)
                 this.Name = defaultFolderName;
             else this.Name = defaultFileName;
-            this.Extension = extensionTextBox.Text;
+            this.Extension = "." + extensionTextBox.Text;
 
             this.Close();
         }
