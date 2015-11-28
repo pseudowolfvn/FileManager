@@ -39,15 +39,17 @@ namespace FileManager.Entities
             return currentDirectory.GetFiles();
         }
 
-        public bool IsChanged()
+        public bool IsChanged(DirectoryInfo changedDirectory)
         {
-            return (this.PanelsListView.SelectedItem != null);
+            return (this.PanelsListView.SelectedItem != null 
+                || changedDirectory.FullName == FileSystem.ExistingSubdirectory(currentDirectory).FullName);
         }
         
-        public void Update ()
+        public void Update()
         {
             PanelsListView.Items.Clear();
-            if (Directory.Exists(currentDirectory.FullName) != true) currentDirectory = this.GetParentDirectory();
+            if (Directory.Exists(currentDirectory.FullName) != true)
+                currentDirectory = FileSystem.ExistingSubdirectory(currentDirectory);
             if (currentDirectory.FullName != currentDrive.RootDirectory.FullName)
             {
                 PanelsListView.Items.Add(new Item(currentDirectory.Parent, @"↑..."));
@@ -78,12 +80,6 @@ namespace FileManager.Entities
             return currentDirectory;
         }
         
-        public DirectoryInfo GetParentDirectory()
-        {
-            DirectoryInfo existParent = currentDirectory.Parent;
-            while (existParent.Exists != true) existParent = existParent.Parent;
-            return existParent;
-        }
         public List<Item> GetSelectedItems()
         {
             List<Item> SelectedItems = new List<Item>();
@@ -91,7 +87,5 @@ namespace FileManager.Entities
                 SelectedItems.Add(x);        
             return SelectedItems;
         }
-
-
     }
 }

@@ -76,9 +76,12 @@ namespace FileManager
 
         public void NotifyObserves(string message)
         {
-            if (message == "Delete" || message == "Move" || message == "Rename")
+            if (message == "Copy" ||  message == "Move" || message == "New" || message == "Rename" || message == "Delete")
+            {
+                DirectoryInfo changedDirectory = GetActivePanel().GetCurrentDirectory();
                 foreach (var x in panels)
-                    if (x.IsChanged()) x.Update();
+                    if (x.IsChanged(changedDirectory)) x.Update();
+            }
             if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change" || message == "Split")
                 GetActivePanel().Update();
         }
@@ -201,11 +204,15 @@ namespace FileManager
 
         public void SplitFile(object sender, RoutedEventArgs e)
         {
-            Item document = GetOneSelected();
+            Item file = GetOneSelected();
+            if (file.File == null) return;
             SplitFile dialog = new SplitFile();
             dialog.ShowDialog();
-            FileSystem.Split(File.ReadAllText(document.File.FullName, Encoding.UTF8), dialog.Size, document);
-            NotifyObserves("Split");
+            if (dialog.Size > 0)
+            {
+                FileSystem.Split(File.ReadAllText(file.File.FullName, Encoding.UTF8), dialog.Size, file);
+                NotifyObserves("Split");
+            }
         }
 
         private bool Agreement(string operation, List<Item> list, string to)

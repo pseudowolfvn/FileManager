@@ -34,7 +34,14 @@ namespace FileManager.Entities
              return null;
         }
 
-        private static  string GetCorrectName(DirectoryInfo root, ItemType type, string name, string extension = "")
+        public static DirectoryInfo ExistingSubdirectory(DirectoryInfo dir)
+        {
+            DirectoryInfo existDirectory = dir;
+            while (Directory.Exists(existDirectory.FullName) != true) existDirectory = existDirectory.Parent;
+            return existDirectory;
+        }
+
+        private static string GetCorrectName(DirectoryInfo root, ItemType type, string name, string extension = "")
         {
             int index = 0;
             string correctName = name;
