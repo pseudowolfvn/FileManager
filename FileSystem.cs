@@ -31,35 +31,29 @@ namespace FileManager.Entities
             foreach (var x in allDrives)
                 if (name == x.Name)
                     return x;
-            return null;
+             return null;
         }
 
         private static  string GetCorrectName(DirectoryInfo root, ItemType type, string name, string extension = "")
         {
             int index = 0;
-            string correctName;
+            string correctName = name;
             if (type == ItemType.Directory)
             {
-                correctName = name;
-                DirectoryInfo dir = new DirectoryInfo(root.FullName + @"\" + correctName);
-                while (dir.Exists)
+                while (Directory.Exists(root.FullName + @"\" + correctName))
                 {
                     correctName = name + "(" + (++index).ToString() + ")";
-                    dir = new DirectoryInfo(root.FullName + @"\" + correctName);
                 }
-                return correctName;
             }
             else
             {
-                correctName = name + extension;
-                FileInfo file = new FileInfo(root.FullName + @"\" + correctName);
-                while (file.Exists)
+                correctName += extension;
+                while (File.Exists(root.FullName + @"\" + correctName))
                 {
                     correctName = name + "(" + (++index).ToString() + ")" + extension;
-                    file = new FileInfo(root.FullName + @"\" + correctName);
                 }
-                return correctName;
             }
+            return correctName;
         }
 
         private static void AddText(FileStream f, string content)
@@ -112,7 +106,7 @@ namespace FileManager.Entities
             foreach (Item x in items)
             {
                 if (x.File != null)
-                    x.File.CopyTo(directory.FullName.ToString() + @"\" + x.Name + x.Extension);
+                    x.File.CopyTo(directory.FullName.ToString() + @"\" + GetCorrectName(directory, ItemType.File, x.Name, x.Extension));
                 else Copy(x.Directory, directory);
             }
                 
@@ -122,17 +116,13 @@ namespace FileManager.Entities
         {
             foreach (Item x in items)
             {
-                int index = 0;
                 string dirFullName = directory.FullName.ToString() + @"\";
                 if (x.File != null)
                 {
-                    FileInfo file = new FileInfo(dirFullName + x.Name + x.Extension);
-                    while (file.Exists)
-                    {
-                        file = new FileInfo(dirFullName + x.Name + "(" + (++index).ToString() + ")" + x.Extension);
-                    }
-                    x.File.MoveTo(file.FullName);
-                    index = 0;
+                    string correctName = x.Name + x.Extension;
+                    if (File.Exists(directory.FullName + @"\" + correctName))
+                        correctName = GetCorrectName(directory, ItemType.File, x.Name, x.Extension);
+                    x.File.MoveTo(directory.FullName + @"\" + correctName);
                 }
                 else if (x.Directory.Root == directory.Root) x.Directory.MoveTo(dirFullName);
                 else
@@ -167,37 +157,17 @@ namespace FileManager.Entities
 
         public static void New(DirectoryInfo currentDirectory, ItemType type, string name, string extension)
         {
-            int index = 1;
-            string fullName = currentDirectory.FullName + @"\" + name + extension;
             if (type == ItemType.Directory)
             {
-                var newDirectory = new DirectoryInfo(fullName);
-                if (!newDirectory.Exists) newDirectory.Create();
-                else
-                {
-                    while (newDirectory.Exists)
-                    {
-                        string temp = currentDirectory.FullName + @"\" + name + "(" + index.ToString() + ")" + extension;
-                        ++index;
-                        newDirectory = new DirectoryInfo(temp);
-                    }
-                    newDirectory.Create();
-                }
+                string fullname = currentDirectory.FullName + @"\" + GetCorrectName(currentDirectory, ItemType.Directory, name, extension);
+                var newDirectory = new DirectoryInfo(fullname);
+                newDirectory.Create();
             }
             else if (type == ItemType.File)
             {
-                var newFile = new FileInfo(fullName);
-                if (!newFile.Exists)  newFile.Create();
-                else
-                {
-                    while (newFile.Exists)
-                    {
-                        string temp = currentDirectory.FullName + @"\" + name + "(" + index.ToString() + ")" + extension;
-                        ++index;
-                        newFile = new FileInfo(temp);
-                    }
-                    newFile.Create();
-                }
+                string fullname = currentDirectory.FullName + @"\" + GetCorrectName(currentDirectory, ItemType.File, name, extension);
+                var newFile = new FileInfo(fullname);
+                newFile.Create();
             }
         }
         }
