@@ -13,14 +13,13 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="Width" Value="45"/>
-            <EventSetter Event="Loaded" Handler="AddDrivesInComboBox"/>
+            <!--<EventSetter Event="Loaded" Handler="AddDrivesInComboBox"/>-->
             <EventSetter Event="SelectionChanged" Handler="DiskChanged"/>
         </Style>
         <Style x:Key="PanelListView" TargetType="{x:Type ListView}">
             <Setter Property="Margin" Value="5,0"/>
             <Setter Property="SelectionMode" Value="Multiple"/>
-            <EventSetter Event="Loaded" Handler="PanelInitialized"/>
-            <EventSetter Event="Loaded" Handler="PanelInitialized"/>
+            <!--<EventSetter Event="Loaded" Handler="PanelInitialized"/>-->
             <EventSetter Event="GotFocus" Handler="PanelChanged"/>
             <EventSetter Event="MouseLeftButtonDown" Handler="PanelChanged"/>
         </Style>
@@ -67,7 +66,7 @@
                     <MenuItem.Header>
                         <TextBlock Text="File" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </MenuItem.Header>
-                     <MenuItem  Header="Split file" Click="SplitFile"/>
+                    <MenuItem  Header="Split file" Click="SplitFile"/>
                 </MenuItem>
             </Menu>
             <Menu x:Name="menu1" Grid.Column="1">
@@ -104,5 +103,6 @@
                 <RowDefinition Height="*"/>-->
             </Grid.RowDefinitions>
         </Grid>
+        <TextBox x:Name="textBox"  Grid.Row="0"  Text="Search"  Grid.Column="4" Margin="0" PreviewKeyDown="OnClickSearch"/>
     </Grid>
 </Window>

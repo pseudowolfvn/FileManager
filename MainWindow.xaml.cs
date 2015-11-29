@@ -52,6 +52,9 @@ namespace FileManager
             columns.Columns.Add(AddGridViewColumn( "Size", "Length"));
             columns.Columns.Add(AddGridViewColumn( "Date of creation", "CreationTime"));
             newLV.View = columns;
+            //
+            newLV.Loaded += PanelInitialized;
+            //
             ComboBox newCB = new ComboBox();
             newCB.Style = Resources["DrivesComboBox"] as Style;
             ColumnDefinition newColumn = new ColumnDefinition();
@@ -63,6 +66,9 @@ namespace FileManager
             newCB.SetValue(Grid.ColumnProperty, numOfPanels);
             PanelsGrid.Children.Add(newLV);
             PanelsGrid.Children.Add(newCB);
+            //
+            newCB.Loaded += AddDrivesInComboBox;
+            //
             ++numOfPanels;
             return new Panel(newCB, newLV);
         }
@@ -286,6 +292,47 @@ namespace FileManager
                 }
             }
             NotifyObserves("Rename");
+        }
+
+        private void OnClickSearch(object sender, KeyEventArgs e)
+        {
+            string required = "";
+            if (e.Key == Key.Enter)
+            {
+                TextBox textBox = sender as TextBox;
+                required = textBox.Text;
+                List<Item> forSearch = GetSelected();
+                List<Item> result = new List<Item>();
+                foreach(Item x in forSearch)
+                {
+                    if (x.Directory != null)
+                        result.AddRange(FileSystem.Search(x.Directory, required));
+                }
+                Panel resultPanel = AddNewPanel();
+                panels.Add(resultPanel);
+                resultPanel.PanelsComboBox.Loaded -= AddDrivesInComboBox;
+                ListView resultList = resultPanel.PanelsListView;
+                resultList.Loaded -= PanelInitialized;
+                resultList.Items.Clear();
+                foreach (Item x in result)
+                {
+                    x.Name = x.FullName;
+                    resultList.Items.Add(x);
+                }
+
+            }
+            //DirectoryInfo dir = new DirectoryInfo(@"D:\Albums");
+            //List<Item> result = FileSystem.Search(dir, required);
+            //Panel resultPanel = AddNewPanel();
+            //panels.Add(resultPanel);
+            //resultPanel.PanelsComboBox.Loaded -= AddDrivesInComboBox;
+            //ListView resultList = resultPanel.PanelsListView;
+            //resultList.Loaded -= PanelInitialized;
+            //resultList.Items.Clear();
+            //foreach (Item x in result)
+            //{
+            //    resultList.Items.Add(x);
+            //}
         }
 
         private void PanelAdded(object sender, RoutedEventArgs e)
