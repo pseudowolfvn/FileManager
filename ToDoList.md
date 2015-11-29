@@ -1,5 +1,5 @@
 #ToDo
-- [ ] Add search
+- [X] Add search
 - [ ] Add HTML to RTF and vice versa convertion
 - [ ] Add HTML features
 - [ ] Forbid any interactions with "..." "directory" (parent directory)
