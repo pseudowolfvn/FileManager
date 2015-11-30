@@ -1,8 +1,8 @@
 #ToDo
-- [x] Connect CMBs to Panels.
-- [x] Add columns.
-- [ ] Add icons for directories and files.
-- [ ] Add correct exeptions for wrong drives.
-- [ ] Find problems with some directories like "Documents and Settings" (Unauthorised access).
-- [ ] Add features to files.
-
+- [X] Add search
+- [ ] Add HTML to RTF and vice versa convertion
+- [ ] Add HTML features
+- [ ] Forbid any interactions with "..." "directory" (parent directory)
+- [ ] Fix bug with copying/moving directories into themselves
+- [ ] Fix bug with some directories like "Documents and Settings" (Unauthorised access).
+- [ ] Forbid setting name of any item longer than 255 symbols
