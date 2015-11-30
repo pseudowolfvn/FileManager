@@ -13,13 +13,13 @@ namespace FileManager.Entities
     {
         public ComboBox PanelsComboBox { get; set; }
         public ListView PanelsListView { get; set; }
-        static int driveID;
+        static int panelID;
         int currentDriveID;
         DriveInfo currentDrive;
         DirectoryInfo currentDirectory;
         public Panel(ComboBox panelsComboBox, ListView panelsListView)
         {
-            currentDriveID = (driveID++) % FileSystem.GetNumOfDrives();
+            currentDriveID = (panelID++) % FileSystem.GetNumOfDrives();
             currentDrive = FileSystem.GetAllDrives()[currentDriveID];
             currentDirectory = currentDrive.RootDirectory;
             PanelsComboBox = panelsComboBox;

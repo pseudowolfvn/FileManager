@@ -18,39 +18,43 @@ namespace FileManager
     /// Interaction logic for RenameDialog.xaml
     /// </summary>
     using FileManager.Entities;
+    public enum DialogType { New, Rename };
     public partial class RenameDialog : Window
     {
-        ItemType dialogType;
+        DialogType dialogType;
+        ItemType itemType;
         string name;
         string extension;
         public string Name { get { return name; } set { name = value; } }
         public string Extension { get { return extension; } set { extension = value; } }
-        public ItemType Type { get { return dialogType; } set { dialogType = value; } }
+        public ItemType Type { get { return itemType; } set { itemType = value; } }
 
         static readonly string defaultFolderName = "New Folder";
         static readonly string defaultFileName = "New File";
-        char[] exception = { ':', '\\', '/', '*', '?', '"', '|', '<', '>' };
+        char[] forbiddenSymbols = { ':', '\\', '/', '*', '?', '"', '|', '<', '>' };
         public RenameDialog(ItemType type = ItemType.Indefinite, string name = "", string extension = "")
         {
             this.name = name;
             this.extension = extension;
-            dialogType = type;
+            itemType = type;
             InitializeComponent();
             if (type == ItemType.Indefinite)
             {
+                dialogType = DialogType.New;
                 typeComboBox.IsEnabled = true;
                 this.Title = "New";
                 this.typeTextBlock.Text = "Create new :";
             }
             else
             {
+                dialogType = DialogType.Rename;
                 typeComboBox.IsEnabled = false;
                 this.Title = "Rename";
                 this.typeTextBlock.Text = "Rename this :";
             }
             if (type == ItemType.Directory) extensionTextBox.IsEnabled = false;
             nameTextBox.Text = name;
-            extensionTextBox.Text = extension;
+            extensionTextBox.Text = extension.Substring(extension.IndexOf('.') + 1);
         }
 
         private void AddTypes(object sender, RoutedEventArgs e)
@@ -58,8 +62,8 @@ namespace FileManager
             ComboBox comboBox = sender as ComboBox;
             comboBox.Items.Add(ItemType.Directory);
             comboBox.Items.Add(ItemType.File);
-            if (dialogType == ItemType.Indefinite) comboBox.SelectedIndex = (int)ItemType.Directory;
-            else comboBox.SelectedIndex = (int)dialogType;
+            if (dialogType == DialogType.New) comboBox.SelectedIndex = (int)ItemType.Directory;
+            else comboBox.SelectedIndex = (int)itemType;
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
@@ -69,17 +73,24 @@ namespace FileManager
 
         private void OnOk(object sender, RoutedEventArgs e)
         {
-            if ((nameTextBox.Text.IndexOfAny(exception) != -1) || (extensionTextBox.Text.IndexOfAny(exception) != -1))
+            if ((nameTextBox.Text.IndexOfAny(forbiddenSymbols) != -1) 
+                || (extensionTextBox.Text.IndexOfAny(forbiddenSymbols) != -1))
             {
-                string text = "The name of file mustn't contain any of this symbols: : | \\ / : * ? < > \" ";
+                string forbiddenList = "";
+                foreach (char x in  forbiddenSymbols)
+                    forbiddenList += x + " ";
+                string text = "A name of file cannot contain any of this symbols: " + forbiddenList;
                 MessageBox.Show(text);
                 return;
             }
             if (nameTextBox.Text != "")
                 this.Name = nameTextBox.Text;
-            else if (Type == ItemType.Directory)
-                this.Name = defaultFolderName;
-            else this.Name = defaultFileName;
+            if (dialogType == DialogType.New)
+            {
+                if (itemType == ItemType.Directory)
+                    this.Name = defaultFolderName;
+                else this.Name = defaultFileName;
+            }
             this.Extension = "." + extensionTextBox.Text;
 
             this.Close();

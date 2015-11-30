@@ -69,8 +69,10 @@ namespace FileManager
 
         public void DeletePanel()
         {
-            PanelsGrid.ColumnDefinitions.RemoveAt(PanelsGrid.ColumnDefinitions.Count - 1);
-            PanelsGrid.Children.RemoveAt(PanelsGrid.Children.Count - 1);
+            PanelsGrid.ColumnDefinitions.RemoveAt(numOfPanels - 1);
+            PanelsGrid.Children.Remove(panels[numOfPanels - 1].PanelsComboBox);
+            PanelsGrid.Children.Remove(panels[numOfPanels - 1].PanelsListView);
+            panels.RemoveAt(numOfPanels - 1);
             --numOfPanels;
         }
 
@@ -262,7 +264,12 @@ namespace FileManager
             RenameDialog dialog = new RenameDialog();
             var panel = GetActivePanel();
             dialog.ShowDialog();
-            if (dialog.Name != "")
+            if (dialog.Name.Length + dialog.Extension.Length + panel.GetCurrentDirectory().FullName.Length >= FileSystem.MaxPathLength)
+            {
+                MessageBox.Show("A full path cannot be longer than " + FileSystem.MaxPathLength + " symbols");
+                return;
+            }
+            else if (dialog.Name != "")
             {
                 FileSystem.New(panel.GetCurrentDirectory(), dialog.Type, dialog.Name, dialog.Extension);
                 NotifyObserves("New");
@@ -279,13 +286,28 @@ namespace FileManager
                 else type = ItemType.File;
                 RenameDialog dialog = new RenameDialog(type, x.Name, x.Extension);
                 dialog.ShowDialog();
-                if (dialog.Name != "" && dialog.Name != x.Name)
+                if ((x.Directory != null && dialog.Name.Length + x.Directory.Parent.FullName.Length >= FileSystem.MaxPathLength)
+                    || (x.File != null && dialog.Name.Length + dialog.Extension.Length + x.File.Directory.FullName.Length >= FileSystem.MaxPathLength))
                 {
-                    if (type == ItemType.Directory) FileSystem.Rename(x.Directory, dialog.Name);
+                    MessageBox.Show("A full path cannot be longer than " + FileSystem.MaxPathLength + " symbols");
+                    return;
+                }
+                if ((dialog.Name != "" && dialog.Name != x.Name) 
+                    || (dialog.Name != "" && type == ItemType.File))
+                {
+                    if (type == ItemType.Directory)
+                    {
+                        string correctName = dialog.Name;
+                        int dotOrSpace = correctName.Length - 1;
+                        while (correctName[dotOrSpace] == '.' || correctName[dotOrSpace] == ' ')
+                            --dotOrSpace;
+                        if (dotOrSpace != correctName.Length - 1) correctName = correctName.Remove(dotOrSpace + 1);
+                        if (correctName != x.Name) FileSystem.Rename(x.Directory, correctName);
+                    }
                     else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
+                    NotifyObserves("Rename");
                 }
             }
-            NotifyObserves("Rename");
         }
 
         private void PanelAdded(object sender, RoutedEventArgs e)

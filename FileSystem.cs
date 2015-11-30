@@ -10,6 +10,7 @@ namespace FileManager.Entities
 {
     static class FileSystem
     {
+        static public readonly uint MaxPathLength = 258;
         static List<DriveInfo> allDrives;
         static FileSystem()
         {
