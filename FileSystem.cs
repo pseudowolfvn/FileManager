@@ -152,9 +152,6 @@ namespace FileManager.Entities
 
         public static void Rename(DirectoryInfo directory, string name)
         {
-            //string fullName = directory.FullName + @"\" + name;
-            //DirectoryInfo dir = new DirectoryInfo(fullName);
-
             directory.MoveTo(directory.Parent.FullName + @"\" + name);
         }
 
@@ -178,6 +175,33 @@ namespace FileManager.Entities
                 newFile.Create();
             }
         }
+        public static List<Item> Search(DirectoryInfo directory, string required)
+        {
+            List<Item> result = new List<Item>();
+            List<Item> forSearch = new List<Item>();
+            DirectoryInfo[] dirs = directory.GetDirectories();
+            foreach(DirectoryInfo x in dirs)
+            {
+                Item currentItem = new Item(x);
+                forSearch.Add(currentItem);
+            }
+            FileInfo[] files = directory.GetFiles();
+            foreach (FileInfo x in files)
+            {
+                Item currentItem = new Item(x);
+                forSearch.Add(currentItem);
+            }
+            foreach(Item x in forSearch)
+            {
+                if ((x.Name == required) || (x.Name + x.Extension == required))
+                    result.Add(x);
+            }
+            foreach(DirectoryInfo x in dirs)
+            {
+                result.AddRange(Search(x, required));
+            }
+            return result;
+        }
         }
 
     public enum ItemType { Directory, File, Indefinite };
@@ -186,6 +210,8 @@ namespace FileManager.Entities
     {
         private string name;
         public string Name { get { return name; } set { name = value; } }
+        private string fullName;
+        public string FullName { get { return fullName; } set { fullName = value; } }
         private string extension;
         public string Extension { get { return extension; } set { extension = value; } }
         private string length;
@@ -202,6 +228,7 @@ namespace FileManager.Entities
             this.directory = directory;
             if (name == "") this.name = directory.Name;
             else this.name = name;
+            this.fullName = directory.Parent.FullName + "\\" + name;
             this.extension = "";
             this.length = @"<DIR>";
             this.creationTime = directory.CreationTime;
@@ -214,6 +241,7 @@ namespace FileManager.Entities
             int i = file.Name.LastIndexOf('.');
             if (i != -1) withoutExtension = file.Name.Substring(0, i);
             this.name = withoutExtension;
+            this.fullName = file.FullName;
             this.extension = file.Extension;
             this.length = file.Length.ToString();
             this.creationTime = file.CreationTime;
