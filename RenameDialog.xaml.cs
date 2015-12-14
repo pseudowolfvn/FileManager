@@ -83,16 +83,18 @@ namespace FileManager
                 MessageBox.Show(text);
                 return;
             }
-            if (nameTextBox.Text != "")
-                this.Name = nameTextBox.Text;
-            if (dialogType == DialogType.New)
+            if (nameTextBox.Text == "")
             {
-                if (itemType == ItemType.Directory)
-                    this.Name = defaultFolderName;
-                else this.Name = defaultFileName;
+                if (dialogType == DialogType.New)
+                    if (itemType == ItemType.Directory)
+                        this.Name = defaultFolderName;
+                    else this.Name = defaultFileName;
             }
-            this.Extension = "." + extensionTextBox.Text;
-
+            else 
+            {
+                this.Name = nameTextBox.Text;
+                if (itemType == ItemType.File) this.Extension = "." + extensionTextBox.Text;
+            }
             this.Close();
         }
 

@@ -84,7 +84,7 @@ namespace FileManager.Entities
         {
             List<Item> SelectedItems = new List<Item>();
             foreach(Item x in this.PanelsListView.SelectedItems)
-                SelectedItems.Add(x);        
+                if (x.IsAccesible) SelectedItems.Add(x);        
             return SelectedItems;
         }
     }

@@ -14,7 +14,7 @@
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="Width" Value="45"/>
             <!--<EventSetter Event="Loaded" Handler="AddDrivesInComboBox"/>-->
-            <EventSetter Event="SelectionChanged" Handler="DiskChanged"/>
+            <!--<EventSetter Event="SelectionChanged" Handler="DiskChanged"/>-->
         </Style>
         <Style x:Key="PanelListView" TargetType="{x:Type ListView}">
             <Setter Property="Margin" Value="5,0"/>

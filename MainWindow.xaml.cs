@@ -52,9 +52,7 @@ namespace FileManager
             columns.Columns.Add(AddGridViewColumn( "Size", "Length"));
             columns.Columns.Add(AddGridViewColumn( "Date of creation", "CreationTime"));
             newLV.View = columns;
-            //
             newLV.Loaded += PanelInitialized;
-            //
             ComboBox newCB = new ComboBox();
             newCB.Style = Resources["DrivesComboBox"] as Style;
             ColumnDefinition newColumn = new ColumnDefinition();
@@ -66,9 +64,8 @@ namespace FileManager
             newCB.SetValue(Grid.ColumnProperty, numOfPanels);
             PanelsGrid.Children.Add(newLV);
             PanelsGrid.Children.Add(newCB);
-            //
             newCB.Loaded += AddDrivesInComboBox;
-            //
+            newCB.SelectionChanged += DiskChanged;
             ++numOfPanels;
             return new Panel(newCB, newLV);
         }
@@ -133,7 +130,9 @@ namespace FileManager
                 comboBox.Items.Add(new ComboBoxItem());
                 comboBox.Items[i++] = x.ToString();
             }
+            comboBox.SelectionChanged -= DiskChanged;
             comboBox.SelectedIndex = GetConnectedPanel(comboBox).GetCurrentDriveID();
+            comboBox.SelectionChanged += DiskChanged;
 
         }
 
@@ -148,18 +147,17 @@ namespace FileManager
             ListViewItem child = sender as ListViewItem;
             Panel x = GetActivePanel();
             Item item = (Item)child.Content;
-                if ((item.Directory != null))// && (!item.Directory.GetAccessControl().AccessRightType.))
+            if (item.IsReadable)
+            {
+                if ((item.Directory != null))
                 {
                     x.ChangeDirectory(item.Directory);
                     NotifyObserves("Change");
                 }
                 else if (item.File != null)
                     FileOpen(item.File);
-                else
-            {
-                string text = "You haven't access to this directory";
-                MessageBoxResult exception = MessageBox.Show(text);
             }
+            else MessageBox.Show("You haven't enough access rights to do so!");
         }
 
         private static void FileOpen(FileInfo file)
@@ -187,7 +185,7 @@ namespace FileManager
         {
             List<Item> result = new List<Item>();
             foreach (var x in panels)
-                if (!x.Equals(GetActivePanel()))
+                if (!x.Equals(GetActivePanel())) 
                 {
                     result.AddRange(x.GetSelectedItems());
                 }
@@ -205,9 +203,7 @@ namespace FileManager
         private Item GetOneSelected()
         {
             List<Item> selected = GetSelected();
-            //if (selected[1] == null)
                 return selected[0];
-            //else - exception
         }
 
         public void SplitFile(object sender, RoutedEventArgs e)
@@ -298,8 +294,8 @@ namespace FileManager
                     MessageBox.Show("A full path cannot be longer than " + FileSystem.MaxPathLength + " symbols");
                     return;
                 }
-                if ((dialog.Name != "" && dialog.Name != x.Name) 
-                    || (dialog.Name != "" && type == ItemType.File))
+                if ((dialog.Name != x.Name) 
+                    || (type == ItemType.File && dialog.Extension != x.Extension))
                 {
                     if (type == ItemType.Directory)
                     {
@@ -310,7 +306,7 @@ namespace FileManager
                         if (dotOrSpace != correctName.Length - 1) correctName = correctName.Remove(dotOrSpace + 1);
                         if (correctName != x.Name) FileSystem.Rename(x.Directory, correctName);
                     }
-                    else FileSystem.Rename(x.File, dialog.Name + dialog.Extension);
+                    else FileSystem.Rename(x.File, dialog.Name, dialog.Extension);
                     NotifyObserves("Rename");
                 }
             }
@@ -343,18 +339,6 @@ namespace FileManager
                 }
 
             }
-            //DirectoryInfo dir = new DirectoryInfo(@"D:\Albums");
-            //List<Item> result = FileSystem.Search(dir, required);
-            //Panel resultPanel = AddNewPanel();
-            //panels.Add(resultPanel);
-            //resultPanel.PanelsComboBox.Loaded -= AddDrivesInComboBox;
-            //ListView resultList = resultPanel.PanelsListView;
-            //resultList.Loaded -= PanelInitialized;
-            //resultList.Items.Clear();
-            //foreach (Item x in result)
-            //{
-            //    resultList.Items.Add(x);
-            //}
         }
 
         private void PanelAdded(object sender, RoutedEventArgs e)

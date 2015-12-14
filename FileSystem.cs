@@ -96,6 +96,7 @@ namespace FileManager.Entities
 
         public static void Copy(DirectoryInfo from, DirectoryInfo to)
         {
+            DirectoryInfo[] subDirs = from.GetDirectories();
             string newName = GetCorrectName(to, ItemType.Directory, from.Name);
             string newPath = to.FullName + @"\" + newName;
             to.CreateSubdirectory(newName);
@@ -103,7 +104,7 @@ namespace FileManager.Entities
             {
                 x.CopyTo(newPath + @"\" + x.Name);
             }
-            foreach (var x in from.GetDirectories())
+            foreach (var x in subDirs)
             {
                 Copy(x, new DirectoryInfo(newPath));
             }
@@ -114,7 +115,7 @@ namespace FileManager.Entities
             foreach (Item x in items)
             {
                 if (x.File != null)
-                    x.File.CopyTo(directory.FullName.ToString() + @"\" + GetCorrectName(directory, ItemType.File, x.Name, x.Extension));
+                    x.File.CopyTo(directory.FullName + @"\" + GetCorrectName(directory, ItemType.File, x.Name, x.Extension));
                 else Copy(x.Directory, directory);
             }
                 
@@ -124,7 +125,7 @@ namespace FileManager.Entities
         {
             foreach (Item x in items)
             {
-                string dirFullName = directory.FullName.ToString() + @"\";
+                string dirFullName = directory.FullName + @"\";
                 if (x.File != null)
                 {
                     string correctName = x.Name + x.Extension;
@@ -152,12 +153,12 @@ namespace FileManager.Entities
 
         public static void Rename(DirectoryInfo directory, string name)
         {
-            directory.MoveTo(directory.Parent.FullName + @"\" + name);
+            directory.MoveTo(directory.Parent.FullName + @"\" + GetCorrectName(directory, ItemType.Directory, name));
         }
 
-        public static void Rename(FileInfo file, string name)
+        public static void Rename(FileInfo file, string name, string extension)
         {
-            file.MoveTo(file.Directory.FullName + @"\" + name);
+            file.MoveTo(file.Directory.FullName + @"\" + GetCorrectName(file.Directory, ItemType.File, name, extension));
         }
 
         public static void New(DirectoryInfo currentDirectory, ItemType type, string name, string extension)
@@ -222,13 +223,39 @@ namespace FileManager.Entities
         public DirectoryInfo Directory { get { return directory; } set { directory = value; } }
         private FileInfo file;
         public FileInfo File { get { return file; } set { file = value; } }
+        public bool IsAccesible
+        {
+            get
+            {
+                if (this.Directory != null && this.Directory.Name == @"↑...") return false;
+                else return this.IsReadable;
+            }
+        }
+        public bool IsReadable
+        {
+            get
+            {
+                if (this.Directory != null)
+                    try
+                    {
+                        this.Directory.GetDirectories();
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        return false;
+                    }
+                return true;
+            }
+        }
 
         public Item(DirectoryInfo directory, string name = "")
         {
             this.directory = directory;
             if (name == "") this.name = directory.Name;
             else this.name = name;
-            this.fullName = directory.Parent.FullName + "\\" + name;
+            if (directory.Parent != null)
+                this.fullName = directory.Parent.FullName + @"\" + this.name;
+            else this.fullName = directory.Root + @"\" + this.name;
             this.extension = "";
             this.length = @"<DIR>";
             this.creationTime = directory.CreationTime;
@@ -241,7 +268,7 @@ namespace FileManager.Entities
             int i = file.Name.LastIndexOf('.');
             if (i != -1) withoutExtension = file.Name.Substring(0, i);
             this.name = withoutExtension;
-            this.fullName = file.FullName;
+            this.fullName = file.Directory.FullName + @"\" + this.name;
             this.extension = file.Extension;
             this.length = file.Length.ToString();
             this.creationTime = file.CreationTime;
