@@ -75,6 +75,21 @@ namespace FileManager.Entities
             currentDirectory = root;
         }
 
+        public bool ChangeSource(DirectoryInfo root)
+        {
+            int index = 0;
+            ComboBox drives = this.PanelsComboBox;
+            while (index < drives.Items.Count && drives.Items[index].ToString() != root.Root.Name) ++index;
+            if (index < drives.Items.Count)
+            {
+                drives.SelectedIndex = index;
+                this.ChangeDirectory(root);
+                return true; 
+            }
+            else return false;
+
+        }
+
         public DirectoryInfo GetCurrentDirectory()
         {
             return currentDirectory;

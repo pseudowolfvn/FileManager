@@ -28,11 +28,11 @@ namespace FileManager
         public MainWindow()
         {
             InitializeComponent();
-            panels.Add(AddNewPanel());
-            panels.Add(AddNewPanel());
+            AddNewPanel();
+            AddNewPanel();
             ActiveListView = panels[0].PanelsListView;
         }
-        private GridViewColumn AddGridViewColumn (string header, string binding)
+        private GridViewColumn AddGridViewColumn(string header, string binding)
         {
             GridViewColumn column = new GridViewColumn();
             column.Header = header;
@@ -44,6 +44,8 @@ namespace FileManager
         public Panel AddNewPanel()
         {
             ListView newLV = new ListView();
+            ComboBox newCB = new ComboBox();
+            panels.Add(new Panel(newCB, newLV));
             newLV.Style = Resources["PanelListView"] as Style;
             newLV.ItemContainerStyle = Resources["PanelListViewItem"] as Style; ;
             GridView columns = new GridView(); 
@@ -53,7 +55,6 @@ namespace FileManager
             columns.Columns.Add(AddGridViewColumn( "Date of creation", "CreationTime"));
             newLV.View = columns;
             newLV.Loaded += PanelInitialized;
-            ComboBox newCB = new ComboBox();
             newCB.Style = Resources["DrivesComboBox"] as Style;
             ColumnDefinition newColumn = new ColumnDefinition();
             newColumn.Width = new GridLength(1, GridUnitType.Star);
@@ -64,21 +65,28 @@ namespace FileManager
             newCB.SetValue(Grid.ColumnProperty, numOfPanels);
             PanelsGrid.Children.Add(newLV);
             PanelsGrid.Children.Add(newCB);
-            newCB.Loaded += AddDrivesInComboBox;
+            AddDrivesInComboBox(newCB);
             newCB.SelectionChanged += DiskChanged;
-            ++numOfPanels;
-            return new Panel(newCB, newLV);
+            return panels[numOfPanels++];
         }
 
         public void DeletePanel()
         {
-            PanelsGrid.ColumnDefinitions.RemoveAt(numOfPanels - 1);
-            PanelsGrid.Children.Remove(panels[numOfPanels - 1].PanelsComboBox);
-            PanelsGrid.Children.Remove(panels[numOfPanels - 1].PanelsListView);
-            panels.RemoveAt(numOfPanels - 1);
-            --numOfPanels;
+            DeletePanelAt(numOfPanels);
         }
 
+        public void DeletePanelAt(int index)
+        {
+            if (numOfPanels > 2)
+            {
+                PanelsGrid.ColumnDefinitions.RemoveAt(index - 1);
+                PanelsGrid.Children.Remove(panels[index - 1].PanelsComboBox);
+                PanelsGrid.Children.Remove(panels[index - 1].PanelsListView);
+                panels.RemoveAt(index - 1);
+                --numOfPanels;
+            }
+            else MessageBox.Show("Must be at least 2 panels!");
+        }
         public void NotifyObserves(string message)
         {
             if (message == "Copy" ||  message == "Move" || message == "New" || message == "Rename" || message == "Delete")
@@ -87,7 +95,7 @@ namespace FileManager
                 foreach (var x in panels)
                     if (x.IsChanged(changedDirectory)) x.Update();
             }
-            if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change" || message == "Split")
+            if (message == "Copy" || message == "Move" || message == "New" || message == "Init" || message == "Change" || message == "Split" || message == "Restore")
                 GetActivePanel().Update();
         }
 
@@ -120,7 +128,7 @@ namespace FileManager
             return null;
         }
 
-        private void AddDrivesInComboBox(object sender, RoutedEventArgs e)
+        private void AddDrivesInComboBox(ComboBox sender)
         {
             int i = 0;
             ComboBox comboBox = sender as ComboBox;
@@ -171,7 +179,7 @@ namespace FileManager
             ActiveListView = sender as ListView;
         }
 
-        private void DiskChanged(object sender, SelectionChangedEventArgs e)
+        public void DiskChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox child = sender as ComboBox;
             string driveName = child.SelectedValue.ToString();
@@ -312,6 +320,48 @@ namespace FileManager
             }
         }
 
+        private List<DirectoryInfo> CreateListOfCurrentDirecrtories()
+        {
+            List<DirectoryInfo> result = new List<DirectoryInfo>();
+            foreach (Panel x in panels)
+                result.Add(x.GetCurrentDirectory());
+            return result;
+        }
+        private void OnClickSave(object sender, RoutedEventArgs e)
+        {
+            CreateSaveConfigFile.Create(numOfPanels, CreateListOfCurrentDirecrtories());
+        }
+
+        private void OnClickLoadByDom(object sender, RoutedEventArgs e)
+        {
+            List<DirectoryInfo> tempList = ReadXMLConfigFileByDom.ReadXMLSaveConfigFile();
+            LoadByList(tempList);
+        }
+        private void OnClickLoadBySax(object sender, RoutedEventArgs e)
+        {
+            List<DirectoryInfo> tempList = ReadXMLConfigFileBySax.ReadXMLSaveConfigFile();
+            LoadByList(tempList);
+        }
+
+        private void LoadByList(List<DirectoryInfo> list)
+        {
+            List<DirectoryInfo> tempList = list;
+            while (numOfPanels < tempList.Count)
+                AddNewPanel();
+            int panelsNum = 0;
+            foreach (DirectoryInfo dir in tempList)
+            {
+                DriveInfo tempDrive = new DriveInfo(dir.Root.FullName);
+                if (panels[panelsNum].ChangeSource(dir))
+                {
+                    SetActivePanel(panels[panelsNum]);
+                    ++panelsNum;
+                    NotifyObserves("Restore");
+                }
+                else DeletePanelAt(panelsNum + 1);
+            }
+        }
+
         private void OnClickSearch(object sender, KeyEventArgs e)
         {
             string required = "";
@@ -327,8 +377,6 @@ namespace FileManager
                         result.AddRange(FileSystem.Search(x.Directory, required));
                 }
                 Panel resultPanel = AddNewPanel();
-                panels.Add(resultPanel);
-                resultPanel.PanelsComboBox.Loaded -= AddDrivesInComboBox;
                 ListView resultList = resultPanel.PanelsListView;
                 resultList.Loaded -= PanelInitialized;
                 resultList.Items.Clear();
@@ -343,9 +391,9 @@ namespace FileManager
 
         private void PanelAdded(object sender, RoutedEventArgs e)
         {
-            panels.Add(AddNewPanel());
+            AddNewPanel();
         }
-
+        
         private void PanelDeleted(object sender, RoutedEventArgs e)
         {
             DeletePanel();
