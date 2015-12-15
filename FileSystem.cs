@@ -227,7 +227,7 @@ namespace FileManager.Entities
         {
             get
             {
-                if (this.Directory != null && this.Directory.Name == @"↑...") return false;
+                if (this.Name == @"↑...") return false;
                 else return this.IsReadable;
             }
         }
