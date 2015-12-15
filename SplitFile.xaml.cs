@@ -28,20 +28,18 @@ namespace FileManager
 
         private void OnOK(object sender, RoutedEventArgs e)
         {
-            if ((Convert.ToInt32(textBox.Text) <= 0) && (Convert.ToInt32(textBox.Text) != -100500))
+            if (Convert.ToInt32(textBox.Text) <= 0)
             {
                 string message = "Size must be positive value! Let's try again.";
                 MessageBox.Show(message);
                 return;
             }
-            else if (Convert.ToInt32(textBox.Text) != -100500)
+            else
             {
                 int temp = Convert.ToInt32(textBox.Text);
                 Size = temp;
                 this.Close();
             }
-            else
-                Size = 0;
             this.Close();
         }
     }

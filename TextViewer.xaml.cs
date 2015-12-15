@@ -132,6 +132,36 @@ namespace FileManager
             MessageBoxResult message = MessageBox.Show(info);
         }
 
+        private void GetHyperlinks()
+        {
+            string links = "";
+            int index = 0, startSearch = index;
+            while ((index = document.IndexOf("href", startSearch)) != -1)
+            {
+                int temp = index;
+                while (temp >= 0 && document[temp] != '<') --temp;
+                if (temp >= 0) while (temp < document.Length && document[temp] != 'a') ++temp;
+                if (document[temp] == 'a')
+                {
+                    int firstQuotes = index + 4, secondQuotes;
+                    bool equalities = false;
+                    while (firstQuotes < document.Length && (document[firstQuotes] == ' ' || (document[firstQuotes] == '=' && !equalities)))
+                    {
+                        if (document[firstQuotes] == '=') equalities = true;
+                        ++firstQuotes;
+                    } 
+                    if (document[firstQuotes] == '"')
+                    {
+                        secondQuotes = document.IndexOf('"', firstQuotes + 1);
+                        if (secondQuotes != -1)
+                            links += document.Substring(firstQuotes + 1, secondQuotes - firstQuotes - 1) + '\n';
+                    }
+                }
+                startSearch = index + 1;
+            }
+            MessageBoxResult message = MessageBox.Show(links);
+        }
+
         private void RemoveWhitespaces(object sender, RoutedEventArgs e)
         {
             if (redundantWhiteSpaces == true)
@@ -146,6 +176,11 @@ namespace FileManager
                 SetDefaultDocument();
                 View();
             }
+        }
+
+        private void ShowHyperlinks(object sender, RoutedEventArgs e)
+        {
+            GetHyperlinks();
         }
 
         private void ChangeView(object sender, RoutedEventArgs e)

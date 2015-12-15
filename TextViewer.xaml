@@ -41,6 +41,7 @@
                     <MenuItem Header="Remove redundant whitespaces" Click="RemoveWhitespaces"/>
                     <MenuItem Header="Show ten longest words" Click="ShowTenLongestWords"/>
                     <MenuItem Header="View as HTML" Click="ChangeView"/>
+                    <MenuItem Header="Show all HyperLinks" Click="ShowHyperlinks"/>
                 </MenuItem>
             </Menu>
             <Menu x:Name="menu3" Grid.Column="3">
