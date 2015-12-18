@@ -84,6 +84,7 @@
                     <MenuItem  Header="Save config" Click="OnClickSave"/>
                     <MenuItem  Header="Load config by DOM" Click="OnClickLoadByDom"/>
                     <MenuItem  Header="Load config by SAX" Click="OnClickLoadBySax"/>
+                    <MenuItem  Header="Load config by LINQ" Click="OnClickLoadByLinq"/>
                 </MenuItem>
             </Menu>
             <Menu x:Name="menu3" Grid.Column="3">

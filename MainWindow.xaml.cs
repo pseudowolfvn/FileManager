@@ -342,7 +342,11 @@ namespace FileManager
             List<DirectoryInfo> tempList = ReadXMLConfigFileBySax.ReadXMLSaveConfigFile();
             LoadByList(tempList);
         }
-
+        private void OnClickLoadByLinq(object sender, RoutedEventArgs e)
+        {
+            List<DirectoryInfo> tempList = ReadXMLConfigFileByLinq.ReadXMLSaveConfigFile();
+            LoadByList(tempList);
+        }
         private void LoadByList(List<DirectoryInfo> list)
         {
             List<DirectoryInfo> tempList = list;

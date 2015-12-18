@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using System.Linq;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FileManager.Entities;
 using System.Windows;
@@ -61,6 +61,41 @@ namespace FileManager
                     }
                 }
             }
+            return resultList;
+        }
+    }
+    static public class ReadXMLConfigFileByLinq
+    {
+        static public List<DirectoryInfo> ReadXMLSaveConfigFile()
+        {
+            XDocument configFile = XDocument.Load(ReadXMLConfigFileByDom.GetCorrectPath("SaveConfigFile.xml"));
+            return ReturnListOfDirectories(configFile);
+        }
+
+        //----------LONG_METHOD----------
+        //static private List<DirectoryInfo> ReturnListOfDirectories(XDocument doc)
+        //{
+        //    List<DirectoryInfo> resultList = new List<DirectoryInfo>();
+        //    foreach (XElement elem in doc.Root.Elements())
+        //    {
+        //        if (elem.Name.ToString().Equals("Panel"))
+        //        {
+        //            DirectoryInfo temp = new DirectoryInfo(elem.Attribute("CurrentDirectory").Value.ToString());
+        //            resultList.Add(temp);
+        //        }
+        //    }
+        //    return resultList;
+        //}
+
+        //----------SHORT_METHOD----------
+        static private List<DirectoryInfo> ReturnListOfDirectories(XDocument doc)
+        {
+            List<DirectoryInfo> resultList = new List<DirectoryInfo>();
+            var ListOfDirs = from pan in doc.Root.Elements("Panel")
+                             let str = new DirectoryInfo(pan.Attributes().First().Value)
+                             select str;
+            foreach (DirectoryInfo dir in ListOfDirs)
+                resultList.Add(dir);
             return resultList;
         }
     }
